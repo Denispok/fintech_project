@@ -12,7 +12,8 @@
     <string name="edit">Edit</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
-    <string name="confirm_dialog_message">Если уйти с экрана редактирования, изменения не сохранятся. Уйти?</string>
-    <string name="confirm_dialog_stay">Остаться</string>
-    <string name="confirm_dialog_leave">Уйти</string>
+    <string name="confirm_dialog_message">If you leave the editing screen, the changes will not be saved. Leave?</string>
+    <string name="confirm_dialog_stay">Stay</string>
+    <string name="confirm_dialog_leave">Leave</string>
+    <string name="invalid_profile">Please check the correctness of the entered data.</string>
 </resources>

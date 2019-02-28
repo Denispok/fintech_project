@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import com.fintech.denispok.fintechproject.ProfileFragment.Companion.FIRST_NAME_KEY
 import com.fintech.denispok.fintechproject.ProfileFragment.Companion.LAST_NAME_KEY
 import com.fintech.denispok.fintechproject.ProfileFragment.Companion.MIDDLE_NAME_KEY
@@ -33,13 +34,17 @@ class EditFragment : Fragment(), MainActivity.IOnBackPressed {
         middleName.setText(profilePreferences.getString(MIDDLE_NAME_KEY, ""))
 
         view.findViewById<Button>(R.id.button_save).setOnClickListener {
-            profilePreferences.edit().apply {
-                putString(LAST_NAME_KEY, lastName.text.toString())
-                putString(FIRST_NAME_KEY, firstName.text.toString())
-                putString(MIDDLE_NAME_KEY, middleName.text.toString())
-                commit()
+            if (isProfileValid()) {
+                profilePreferences.edit().apply {
+                    putString(LAST_NAME_KEY, lastName.text.toString().trim())
+                    putString(FIRST_NAME_KEY, firstName.text.toString().trim())
+                    putString(MIDDLE_NAME_KEY, middleName.text.toString().trim())
+                    commit()
+                }
+                fragmentManager!!.popBackStack()
+            } else {
+                Toast.makeText(context!!, R.string.invalid_profile, Toast.LENGTH_LONG).show()
             }
-            fragmentManager!!.popBackStack()
         }
         view.findViewById<Button>(R.id.button_cancel).setOnClickListener {
             leaveFragment()
@@ -48,12 +53,27 @@ class EditFragment : Fragment(), MainActivity.IOnBackPressed {
     }
 
     private fun isProfileChanged(): Boolean {
-        if (profilePreferences.getString(LAST_NAME_KEY, "") != lastName.text.toString() ||
-            profilePreferences.getString(FIRST_NAME_KEY, "") != firstName.text.toString() ||
-            profilePreferences.getString(MIDDLE_NAME_KEY, "") != middleName.text.toString()
+        if (profilePreferences.getString(LAST_NAME_KEY, "") != lastName.text.toString().trim() ||
+            profilePreferences.getString(FIRST_NAME_KEY, "") != firstName.text.toString().trim() ||
+            profilePreferences.getString(MIDDLE_NAME_KEY, "") != middleName.text.toString().trim()
         )
             return true
         return false
+    }
+
+    private fun isProfileValid(): Boolean {
+        if (!isFieldValid(lastName.text.toString()) ||
+            !isFieldValid(firstName.text.toString()) ||
+            !isFieldValid(middleName.text.toString())
+        ) return false
+        return true
+    }
+
+    private fun isFieldValid(field: String): Boolean {
+        val trimmedField = field.trim()
+        if (trimmedField.isEmpty()) return false
+        if (trimmedField[0].isLowerCase()) return false
+        return true
     }
 
     private fun leaveFragment() {
