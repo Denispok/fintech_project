@@ -78,12 +78,7 @@ class EditFragment : Fragment(), MainActivity.IOnBackPressed {
 
     private fun leaveFragment() {
         if (isProfileChanged()) {
-            val dialog = ConfirmDialogFragment.newInstance(object : ConfirmDialogFragment.FinishListener {
-                override fun onClick() {
-                    fragmentManager!!.popBackStack()
-                }
-            })
-            dialog.show(fragmentManager, "confirm_dialog")
+            ConfirmDialogFragment().show(fragmentManager, "confirm_dialog")
         } else {
             fragmentManager!!.popBackStack()
         }
