@@ -45,7 +45,7 @@
                 android:id="@+id/course_date_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:text="ДЕК 2017 Г."
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -55,12 +55,13 @@
                 android:id="@+id/course_title_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
+                android:maxLines="2"
                 android:text="Курс №1. Android-разработка"
                 android:textColor="@color/colorText"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/course_date_1" />
+                app:layout_constraintTop_toBottomOf="@id/course_state_1" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -74,6 +75,7 @@
                 app:layout_constraintTop_toBottomOf="@id/course_title_1" />
 
             <TextView
+                android:id="@+id/course_state_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/course_status_background"
@@ -97,7 +99,7 @@
                 android:id="@+id/course_date_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:text="МАР 2017 Г."
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -107,12 +109,13 @@
                 android:id="@+id/course_title_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
+                android:maxLines="2"
                 android:text="Курс №1. Android-разработка"
                 android:textColor="@color/colorText"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/course_date_2" />
+                app:layout_constraintTop_toBottomOf="@id/course_state_2" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -126,6 +129,7 @@
                 app:layout_constraintTop_toBottomOf="@id/course_title_2" />
 
             <TextView
+                android:id="@+id/course_state_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/course_status_background"

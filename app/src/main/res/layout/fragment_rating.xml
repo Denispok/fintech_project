@@ -87,6 +87,8 @@
             android:id="@+id/overall_rating_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/baseline_smoking_rooms_24"
+            android:drawablePadding="2dp"
             android:text="Общий рейтинг"
             android:textSize="@dimen/rating_text_size_common"
             app:layout_constraintBottom_toBottomOf="@id/overall_rating"
