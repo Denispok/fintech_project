@@ -2,4 +2,10 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="badge_image_dimen">54dp</dimen>
+    <dimen name="badge_image_corner_radius">26dp</dimen>
+    <dimen name="courses_fragment_margin">8dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="rating_text_size_common">14sp</dimen>
 </resources>
