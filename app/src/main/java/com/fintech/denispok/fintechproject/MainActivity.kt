@@ -35,16 +35,10 @@ class MainActivity : AppCompatActivity() {
         viewPager.offscreenPageLimit = 2
 
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_events -> {
-                    currentTab = EVENTS_TAB
-                }
-                R.id.navigation_courses -> {
-                    currentTab = COURSES_TAB
-                }
-                R.id.navigation_profile -> {
-                    currentTab = PROFILE_TAB
-                }
+            currentTab = when (item.itemId) {
+                R.id.navigation_events -> EVENTS_TAB
+                R.id.navigation_courses -> COURSES_TAB
+                R.id.navigation_profile -> PROFILE_TAB
                 else -> return@setOnNavigationItemSelectedListener false
             }
             viewPager.setCurrentItem(currentTab, false)

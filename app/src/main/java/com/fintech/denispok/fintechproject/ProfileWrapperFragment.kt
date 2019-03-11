@@ -22,8 +22,10 @@ class ProfileWrapperFragment : Fragment(), MainActivity.IOnBackPressed {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        childFragmentManager.beginTransaction()
-            .replace(R.id.fragment_profile_wrapper, ProfileFragment())
-            .commit()
+        if (savedInstanceState == null) {
+            childFragmentManager.beginTransaction()
+                .replace(R.id.fragment_profile_wrapper, ProfileFragment())
+                .commit()
+        }
     }
 }
