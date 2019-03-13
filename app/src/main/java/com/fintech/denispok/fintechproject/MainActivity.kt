@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val CURRENT_TAB_KEY = "current_tag"
+        const val CURRENT_TAB_KEY = "current_tab"
         const val EVENTS_TAB = 0
         const val COURSES_TAB = 1
         const val PROFILE_TAB = 2

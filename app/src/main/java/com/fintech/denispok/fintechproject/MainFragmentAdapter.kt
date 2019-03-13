@@ -12,9 +12,9 @@ class MainFragmentAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapt
 
     private val TAB_MAIN_COUNT = 3
 
-    var eventsFragmentTag: String? = null
-    var coursesFragmentTag: String? = null
-    var profileFragmentTag: String? = null
+    private var eventsFragmentTag: String? = null
+    private var coursesFragmentTag: String? = null
+    private var profileFragmentTag: String? = null
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
