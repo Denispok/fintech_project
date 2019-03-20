@@ -1,10 +1,12 @@
-package com.fintech.denispok.fintechproject
+package com.fintech.denispok.fintechproject.profile
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.fintech.denispok.fintechproject.MainActivity
+import com.fintech.denispok.fintechproject.R
 
 class ProfileWrapperFragment : Fragment(), MainActivity.IOnBackPressed {
 

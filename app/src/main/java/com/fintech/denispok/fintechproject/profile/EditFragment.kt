@@ -1,4 +1,4 @@
-package com.fintech.denispok.fintechproject
+package com.fintech.denispok.fintechproject.profile
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -10,9 +10,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.fintech.denispok.fintechproject.ProfileFragment.Companion.FIRST_NAME_KEY
-import com.fintech.denispok.fintechproject.ProfileFragment.Companion.LAST_NAME_KEY
-import com.fintech.denispok.fintechproject.ProfileFragment.Companion.MIDDLE_NAME_KEY
+import com.fintech.denispok.fintechproject.MainActivity
+import com.fintech.denispok.fintechproject.R
+import com.fintech.denispok.fintechproject.profile.ProfileFragment.Companion.FIRST_NAME_KEY
+import com.fintech.denispok.fintechproject.profile.ProfileFragment.Companion.LAST_NAME_KEY
+import com.fintech.denispok.fintechproject.profile.ProfileFragment.Companion.MIDDLE_NAME_KEY
 
 class EditFragment : Fragment(), MainActivity.IOnBackPressed {
 

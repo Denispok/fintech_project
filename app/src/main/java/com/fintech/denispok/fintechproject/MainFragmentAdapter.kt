@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import com.fintech.denispok.fintechproject.MainActivity.Companion.COURSES_TAB
 import com.fintech.denispok.fintechproject.MainActivity.Companion.EVENTS_TAB
 import com.fintech.denispok.fintechproject.MainActivity.Companion.PROFILE_TAB
+import com.fintech.denispok.fintechproject.courses.CoursesFragment
+import com.fintech.denispok.fintechproject.profile.ProfileWrapperFragment
 
 class MainFragmentAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
 

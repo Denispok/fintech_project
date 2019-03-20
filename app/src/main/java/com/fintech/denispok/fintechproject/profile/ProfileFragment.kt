@@ -1,4 +1,4 @@
-package com.fintech.denispok.fintechproject
+package com.fintech.denispok.fintechproject.profile
 
 import android.content.Context
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import com.fintech.denispok.fintechproject.R
 
 class ProfileFragment : Fragment() {
 
