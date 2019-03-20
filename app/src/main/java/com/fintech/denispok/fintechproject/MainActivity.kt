@@ -2,78 +2,72 @@ package com.fintech.denispok.fintechproject
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
-import android.support.v4.app.FragmentManager
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     interface IOnBackPressed {
-        fun onBackPressed()
+        fun onBackPressed(): Boolean
     }
 
     companion object {
-        const val EVENTS_TAG = "events"
-        const val COURSES_TAG = "courses"
-        const val PROFILE_TAG = "profile"
+        const val CURRENT_TAB_KEY = "current_tab"
+        const val EVENTS_TAB = 0
+        const val COURSES_TAB = 1
+        const val PROFILE_TAB = 2
     }
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_events -> {
-                if (supportFragmentManager.findFragmentByTag(EVENTS_TAG) != null) {
-                    supportFragmentManager.popBackStackImmediate(EVENTS_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                } else {
-                    supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_holder, EventsFragment(), EVENTS_TAG).commitNow()
-                }
-                supportActionBar?.title = getString(R.string.title_events)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_courses -> {
-                if (supportFragmentManager.findFragmentByTag(COURSES_TAG) != null) {
-                    supportFragmentManager.popBackStackImmediate(COURSES_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                } else {
-                    supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_holder, CoursesFragment(), COURSES_TAG).commitNow()
-                }
-                supportActionBar?.title = getString(R.string.title_courses)
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_profile -> {
-                if (supportFragmentManager.findFragmentByTag(PROFILE_TAG) != null) {
-                    supportFragmentManager.popBackStackImmediate(PROFILE_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-
-                } else {
-                    supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_holder, ProfileFragment(), PROFILE_TAG).commitNow()
-                }
-                supportActionBar?.title = getString(R.string.title_profile)
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        false
-    }
+    private lateinit var viewPager: ViewPager
+    private lateinit var viewPagerAdapter: MainFragmentAdapter
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private var currentTab = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_holder, EventsFragment(), EVENTS_TAG)
-            .commitNow()
-        supportActionBar?.title = getString(R.string.title_events)
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        viewPager = findViewById(R.id.view_pager)
+        bottomNavigationView = findViewById(R.id.navigation)
+
+        viewPagerAdapter = MainFragmentAdapter(supportFragmentManager)
+        viewPager.adapter = viewPagerAdapter
+        viewPager.offscreenPageLimit = 2
+
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            currentTab = when (item.itemId) {
+                R.id.navigation_events -> EVENTS_TAB
+                R.id.navigation_courses -> COURSES_TAB
+                R.id.navigation_profile -> PROFILE_TAB
+                else -> return@setOnNavigationItemSelectedListener false
+            }
+            viewPager.setCurrentItem(currentTab, false)
+            updateTitle()
+            true
+        }
+
+        currentTab = savedInstanceState?.getInt(CURRENT_TAB_KEY, 0) ?: 0
+        updateTitle()
     }
 
     override fun onBackPressed() {
-        val fragment = supportFragmentManager.findFragmentById(R.id.fragment_holder)
+        val fragment = supportFragmentManager.findFragmentByTag(viewPagerAdapter.getTag(currentTab))
         if (fragment is IOnBackPressed) {
-            fragment.onBackPressed()
-        } else {
-            super.onBackPressed()
+            if (fragment.onBackPressed()) return
+        }
+        super.onBackPressed()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState?.putInt(CURRENT_TAB_KEY, currentTab)
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun updateTitle() {
+        when (currentTab) {
+            EVENTS_TAB -> supportActionBar?.title = getString(R.string.title_events)
+            COURSES_TAB -> supportActionBar?.title = getString(R.string.title_courses)
+            PROFILE_TAB -> supportActionBar?.title = getString(R.string.title_profile)
         }
     }
 }

@@ -84,7 +84,8 @@ class EditFragment : Fragment(), MainActivity.IOnBackPressed {
         }
     }
 
-    override fun onBackPressed() {
+    override fun onBackPressed(): Boolean {
         leaveFragment()
+        return true
     }
 }

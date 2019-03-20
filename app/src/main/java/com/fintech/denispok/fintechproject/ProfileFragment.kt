@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import com.fintech.denispok.fintechproject.MainActivity.Companion.PROFILE_TAG
 
 class ProfileFragment : Fragment() {
 
@@ -22,8 +21,8 @@ class ProfileFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
         view.findViewById<Button>(R.id.button_edit).setOnClickListener {
             fragmentManager!!.beginTransaction()
-                .addToBackStack(PROFILE_TAG)
-                .replace(R.id.fragment_holder, EditFragment())
+                .addToBackStack(null)
+                .replace(R.id.fragment_profile_wrapper, EditFragment())
                 .commit()
         }
         return view
