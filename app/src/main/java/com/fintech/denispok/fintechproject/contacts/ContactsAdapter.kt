@@ -13,8 +13,8 @@ class ContactsAdapter(private val contacts: List<Contact>) :
     RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder>() {
 
     companion object {
-        val LINEAR_VIEW_TYPE = 0
-        val GRID_VIEW_TYPE = 1
+        const val LINEAR_VIEW_TYPE = 0
+        const val GRID_VIEW_TYPE = 1
     }
 
     var viewType = LINEAR_VIEW_TYPE
@@ -51,10 +51,10 @@ class ContactsAdapter(private val contacts: List<Contact>) :
 
         fun bind(contact: Contact) {
             roundView.initials = contact.parseInitials()
-            roundView.roundColor = Random.nextInt(16777216) - 16777216
+            roundView.roundColor = contact.color
             name.text = contact.name
             if (viewType == LINEAR_VIEW_TYPE) {
-                points?.text = Random.nextInt(200).toString() + " баллов"
+                points?.text = contact.getPointsString()
             }
         }
     }
