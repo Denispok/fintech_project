@@ -1,111 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="4dp">
+<android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="4dp">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/progress_details"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingStart="@dimen/card_padding"
-            android:paddingEnd="@dimen/card_padding"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:text="Успеваемость"
-                android:textColor="@color/colorText"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:text="Детали"
-                android:textAllCaps="true"
-                android:textColor="@color/colorPrimary"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/progress_details"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="@dimen/card_padding"
+                android:paddingEnd="@dimen/card_padding"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="Успеваемость"
+                    android:textColor="@color/colorText"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="Детали"
+                    android:textAllCaps="true"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
         </android.support.constraint.ConstraintLayout>
 
         <HorizontalScrollView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="20dp"
-            android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/progress_details">
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="20dp"
+                android:scrollbars="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/progress_details">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp">
-
-                <com.fintech.denispok.fintechproject.customviews.BadgeView
+                    android:id="@+id/badges_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:count="201"
-                    app:name="Good Boy"
-                    app:src="@drawable/goodboy_image" />
+                    android:orientation="horizontal"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp">
 
                 <com.fintech.denispok.fintechproject.customviews.BadgeView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:count="12"
-                    app:name="Good Boy 2"
-                    app:src="@drawable/goodboy_image" />
+                        android:id="@+id/badge_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:count="201"
+                        app:name="Good Boy"
+                        app:src="@drawable/goodboy_image"/>
 
                 <com.fintech.denispok.fintechproject.customviews.BadgeView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:count="4"
-                    app:name="Good Boy 3"
-                    app:src="@drawable/goodboy_image" />
+                        android:id="@+id/badge_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:count="12"
+                        app:name="Good Boy 2"
+                        app:src="@drawable/goodboy_image"/>
 
                 <com.fintech.denispok.fintechproject.customviews.BadgeView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:count="201"
-                    app:name="Good Boy 4"
-                    app:src="@drawable/goodboy_image" />
+                        android:id="@+id/badge_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:count="4"
+                        app:name="Good Boy 3"
+                        app:src="@drawable/goodboy_image"/>
 
                 <com.fintech.denispok.fintechproject.customviews.BadgeView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:count="12"
-                    app:name="Good Boy 5"
-                    app:src="@drawable/goodboy_image" />
+                        android:id="@+id/badge_4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:count="201"
+                        app:name="Good Boy 4"
+                        app:src="@drawable/goodboy_image"/>
 
                 <com.fintech.denispok.fintechproject.customviews.BadgeView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:count="4"
-                    app:name="Good Boy 6"
-                    app:src="@drawable/goodboy_image" />
+                        android:id="@+id/badge_5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:count="12"
+                        app:name="Good Boy 5"
+                        app:src="@drawable/goodboy_image"/>
+
+                <com.fintech.denispok.fintechproject.customviews.BadgeView
+                        android:id="@+id/badge_6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:count="4"
+                        app:name="Good Boy 6"
+                        app:src="@drawable/goodboy_image"/>
             </LinearLayout>
 
         </HorizontalScrollView>
