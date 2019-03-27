@@ -8,7 +8,14 @@ import android.view.ViewGroup
 import com.fintech.denispok.fintechproject.MainActivity
 import com.fintech.denispok.fintechproject.R
 
-class ProfileWrapperFragment : Fragment(), MainActivity.IOnBackPressed {
+class ProfileWrapperFragment : Fragment(), MainActivity.IOnBackPressed, MainActivity.IOnTabSelected {
+
+    override fun onTabSelected() {
+        val fragment = childFragmentManager.findFragmentById(R.id.fragment_profile_wrapper)
+        if (fragment is MainActivity.IOnTabSelected) {
+            fragment.onTabSelected()
+        }
+    }
 
     override fun onBackPressed(): Boolean {
         val fragment = childFragmentManager.findFragmentById(R.id.fragment_profile_wrapper)

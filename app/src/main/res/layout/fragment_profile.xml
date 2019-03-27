@@ -7,14 +7,22 @@
     android:layout_height="match_parent"
     android:padding="12dp">
 
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/last_name_title"
         style="@style/TextTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
         android:paddingBottom="4dp"
         android:text="@string/last_name_title"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toEndOf="@id/profile_image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -22,7 +30,7 @@
         style="@style/TextTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/last_name_title"
+        app:layout_constraintStart_toEndOf="@id/last_name_title"
         app:layout_constraintTop_toTopOf="@id/last_name_title"
         tools:text="Shakhov" />
 
@@ -33,7 +41,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="4dp"
         android:text="@string/first_name_title"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="@id/last_name_title"
         app:layout_constraintTop_toBottomOf="@id/last_name_title" />
 
     <TextView
@@ -41,7 +49,7 @@
         style="@style/TextTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/first_name_title"
+        app:layout_constraintStart_toEndOf="@id/first_name_title"
         app:layout_constraintTop_toTopOf="@id/first_name_title"
         tools:text="Denis" />
 
@@ -52,7 +60,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="4dp"
         android:text="@string/middle_name_title"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="@id/first_name_title"
         app:layout_constraintTop_toBottomOf="@id/first_name_title" />
 
     <TextView
@@ -60,7 +68,7 @@
         style="@style/TextTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/middle_name_title"
+        app:layout_constraintStart_toEndOf="@id/middle_name_title"
         app:layout_constraintTop_toTopOf="@id/middle_name_title"
         tools:text="Andreevich" />
 
@@ -69,8 +77,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/edit"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/middle_name_title" />
 
 </android.support.constraint.ConstraintLayout>
