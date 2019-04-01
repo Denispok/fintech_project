@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.contacts.ContactsActivity
 import com.fintech.denispok.fintechproject.customviews.BadgeView
+import java.lang.ref.WeakReference
 
 class CoursesFragment : Fragment() {
 
@@ -32,22 +33,23 @@ class CoursesFragment : Fragment() {
         }
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout)
 
-        swipeRefreshLayout.apply {
-            setOnRefreshListener {
-                RandomPointsThread(this@CoursesFragment.handler, badgesLayout.childCount).start()
-            }
+        swipeRefreshLayout.setOnRefreshListener {
+            RandomPointsThread(this.handler, badgesLayout.childCount).start()
         }
+
+        val swipeRefreshLayoutReference = WeakReference(swipeRefreshLayout)
+        val badgesLayoutReference = WeakReference(badgesLayout)
 
         handler = Handler(Handler.Callback {
             if (it.what == RANDOM_POINTS_CODE) {
                 val randomPoints = it.obj as Array<Int>
                 for (i in 0 until randomPoints.size) {
-                    val child = badgesLayout.getChildAt(i)
+                    val child = badgesLayoutReference.get()?.getChildAt(i)
                     if (child is BadgeView) {
                         child.count = randomPoints[i]
                     }
                 }
-                swipeRefreshLayout.isRefreshing = false
+                swipeRefreshLayoutReference.get()?.isRefreshing = false
                 return@Callback true
             }
             false
