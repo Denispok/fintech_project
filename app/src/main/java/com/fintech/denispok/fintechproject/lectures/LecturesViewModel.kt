@@ -12,4 +12,6 @@ class LecturesViewModel(private val repository: Repository) : ViewModel() {
 
     fun getTasks(lectureId: Int): LiveData<List<Task>> = repository.getTasks(lectureId)
 
+    fun updateLectures() = repository.updateLectures()
+
 }

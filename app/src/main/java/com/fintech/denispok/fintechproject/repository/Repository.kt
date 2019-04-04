@@ -46,26 +46,29 @@ class Repository private constructor(private val lectureDao: LectureDao, private
     }
 
     fun updateLectures() {
-        val retrofit = RetrofitProvider.getInstance()
-        val apiService = retrofit.create(ApiService::class.java)
-        val response = apiService.getLectures(token).execute()
+        Thread {
+            val retrofit = RetrofitProvider.getInstance()
+            val apiService = retrofit.create(ApiService::class.java)
+            val response = apiService.getLectures(token).execute()
 
-        if (response.isSuccessful) {
-            response.body()?.also {
-                lectureDao.deleteAllLectures()
-                lectureDao.insertLectures(it.lectures)
-                lectures.postValue(lectureDao.getLectures())
+            if (response.isSuccessful) {
+                response.body()?.also {
+                    lectureDao.deleteAllLectures()
+                    lectureDao.insertLectures(it.lectures)
+                    lectures.postValue(lectureDao.getLectures())
 
-                val tasks = mutableListOf<Task>()
-                it.lectures.forEach { lecture ->
-                    lecture.tasks?.forEach { task ->
-                        task.lectureId = lecture.id
-                        tasks.add(task)
+                    taskDao.deleteAllTasks()
+                    val tasks = mutableListOf<Task>()
+                    it.lectures.forEach { lecture ->
+                        lecture.tasks?.forEach { task ->
+                            task.lectureId = lecture.id
+                            tasks.add(task)
+                        }
                     }
+                    taskDao.insertTasks(tasks)
                 }
-                taskDao.insertTasks(tasks)
             }
-        }
+        }.start()
     }
 
     fun getTasks(lectureId: Int): LiveData<List<Task>> {
