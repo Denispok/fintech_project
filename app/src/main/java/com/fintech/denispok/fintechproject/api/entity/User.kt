@@ -1,4 +1,4 @@
-package com.fintech.denispok.fintechproject.api
+package com.fintech.denispok.fintechproject.api.entity
 
 import com.google.gson.annotations.SerializedName
 

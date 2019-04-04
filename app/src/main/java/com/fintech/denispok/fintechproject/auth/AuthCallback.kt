@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import com.fintech.denispok.fintechproject.api.User
+import com.fintech.denispok.fintechproject.api.entity.User
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback

@@ -3,7 +3,7 @@ package com.fintech.denispok.fintechproject.profile
 import android.util.Log
 import android.widget.Toast
 import com.bumptech.glide.Glide
-import com.fintech.denispok.fintechproject.api.User
+import com.fintech.denispok.fintechproject.api.entity.User
 import com.fintech.denispok.fintechproject.api.UserResponseBody
 import retrofit2.Call
 import retrofit2.Callback

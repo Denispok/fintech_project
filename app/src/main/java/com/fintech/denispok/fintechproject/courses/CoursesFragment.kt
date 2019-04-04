@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.contacts.ContactsActivity
 import com.fintech.denispok.fintechproject.customviews.BadgeView
+import com.fintech.denispok.fintechproject.lectures.LecturesActivity
 import java.lang.ref.WeakReference
 
 class CoursesFragment : Fragment() {
@@ -28,9 +29,15 @@ class CoursesFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_courses, container, false)
         badgesLayout = view.findViewById(R.id.badges_layout)
+
         view.findViewById<ConstraintLayout>(R.id.progress_details).setOnClickListener {
             startActivity(Intent(context, ContactsActivity::class.java))
         }
+
+        view.findViewById<ConstraintLayout>(R.id.rating_details).setOnClickListener {
+            startActivity(Intent(context, LecturesActivity::class.java))
+        }
+
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout)
 
         swipeRefreshLayout.setOnRefreshListener {
