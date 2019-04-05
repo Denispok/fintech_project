@@ -33,10 +33,13 @@ class TaskAdapter(var tasks: List<Task>) : RecyclerView.Adapter<TaskAdapter.Task
         fun bind(task: Task) {
             title.text = task.taskDescription.title
 
-            task.taskDescription.deadlineDate?.apply {
+            if (task.taskDescription.deadlineDate != null) {
+                deadline.visibility = View.VISIBLE
                 val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH)
-                val date = format.parse(this)
-                deadline.text = date.toString()
+                val date = format.parse(task.taskDescription.deadlineDate)
+                deadline.text = "Deadline: " + SimpleDateFormat("dd.MM.yy HH:mm", Locale.ENGLISH).format(date)
+            } else {
+                deadline.visibility = View.GONE
             }
 
             status.text = task.status
