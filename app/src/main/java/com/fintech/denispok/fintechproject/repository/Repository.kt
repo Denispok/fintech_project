@@ -10,16 +10,20 @@ import com.fintech.denispok.fintechproject.api.entity.Task
 import com.fintech.denispok.fintechproject.repository.dao.LectureDao
 import com.fintech.denispok.fintechproject.repository.dao.TaskDao
 
-class Repository private constructor(private val lectureDao: LectureDao, private val taskDao: TaskDao, private val authPreferences: SharedPreferences) {
+class Repository private constructor(
+    private val lectureDao: LectureDao,
+    private val taskDao: TaskDao,
+    private val authPreferences: SharedPreferences
+) {
 
     companion object {
         @Volatile
         private var instance: Repository? = null
 
         fun getInstance(lectureDao: LectureDao, taskDao: TaskDao, authPreferences: SharedPreferences) =
-                instance ?: synchronized(this) {
-                    instance ?: Repository(lectureDao, taskDao, authPreferences).also { instance = it }
-                }
+            instance ?: synchronized(this) {
+                instance ?: Repository(lectureDao, taskDao, authPreferences).also { instance = it }
+            }
     }
 
     private val lectures: MutableLiveData<List<Lecture>> = MutableLiveData()
