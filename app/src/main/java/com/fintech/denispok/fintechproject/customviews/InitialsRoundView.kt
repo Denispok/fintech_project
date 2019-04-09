@@ -37,4 +37,14 @@ class InitialsRoundView(context: Context, attrs: AttributeSet) : TextView(contex
         background = drawable
         gravity = Gravity.CENTER
     }
+
+    fun parseInitials(string: String) {
+        val names = string.split(" ")
+        var initials = ""
+        for (name in names) {
+            initials += name[0].toUpperCase()
+            if (initials.length >= 2) break
+        }
+        this.initials = initials
+    }
 }

@@ -7,16 +7,6 @@ data class Contact(val id: Int, val name: String) : Serializable {
     var points: Int = Random.nextInt(200)
     var color: Int = Random.nextInt(16777216) - 16777216
 
-    fun parseInitials(): String {
-        val names = name.split(" ")
-        var initials = ""
-        for (name in names) {
-            initials += name[0].toUpperCase()
-            if (initials.length >= 2) break
-        }
-        return initials
-    }
-
     fun getPointsString(): String {
         val pointsText = when {
             points % 100 in 10..20 -> "баллов"
