@@ -12,19 +12,19 @@ class RetrofitProvider private constructor() {
         private var instance: Retrofit? = null
 
         fun getInstance() =
-            instance ?: synchronized(this) {
-                instance ?: Retrofit.Builder()
-                    .baseUrl("https://fintech.tinkoff.ru/")
-                    .client(OkHttpClient.Builder()
-                        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                        .addInterceptor {
-                            Thread.sleep(2000)
-                            it.proceed(it.request())
-                        }
-                        .build())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                    .also { instance = it }
-            }
+                instance ?: synchronized(this) {
+                    instance ?: Retrofit.Builder()
+                            .baseUrl("https://fintech.tinkoff.ru/")
+                            .client(OkHttpClient.Builder()
+                                    .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                                    .addInterceptor {
+                                        Thread.sleep(1000)
+                                        it.proceed(it.request())
+                                    }
+                                    .build())
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build()
+                            .also { instance = it }
+                }
     }
 }

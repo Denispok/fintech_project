@@ -7,10 +7,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.customviews.InitialsRoundView
-import kotlin.random.Random
 
 class ContactsAdapter(private val contacts: List<Contact>) :
-    RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder>() {
+        RecyclerView.Adapter<ContactsAdapter.ContactsViewHolder>() {
 
     companion object {
         const val LINEAR_VIEW_TYPE = 0
@@ -22,14 +21,14 @@ class ContactsAdapter(private val contacts: List<Contact>) :
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ContactsViewHolder {
         val view = when (viewType) {
             LINEAR_VIEW_TYPE -> LayoutInflater.from(viewGroup.context).inflate(
-                R.layout.contacts_item_linear,
-                viewGroup,
-                false
+                    R.layout.contacts_item_linear,
+                    viewGroup,
+                    false
             )
             GRID_VIEW_TYPE -> LayoutInflater.from(viewGroup.context).inflate(
-                R.layout.contacts_item_grid,
-                viewGroup,
-                false
+                    R.layout.contacts_item_grid,
+                    viewGroup,
+                    false
             )
             else -> throw IllegalStateException()
         }
@@ -50,7 +49,7 @@ class ContactsAdapter(private val contacts: List<Contact>) :
         private var points: TextView? = itemView.findViewById(R.id.contacts_item_points)
 
         fun bind(contact: Contact) {
-            roundView.initials = contact.parseInitials()
+            roundView.parseInitials(contact.name)
             roundView.roundColor = contact.color
             name.text = contact.name
             if (viewType == LINEAR_VIEW_TYPE) {
