@@ -10,7 +10,7 @@ import com.fintech.denispok.fintechproject.api.entity.Task
 import com.fintech.denispok.fintechproject.repository.dao.LectureDao
 import com.fintech.denispok.fintechproject.repository.dao.StudentDao
 import com.fintech.denispok.fintechproject.repository.dao.TaskDao
-import com.google.gson.JsonArray
+import com.fintech.denispok.fintechproject.students.StudentsUpdateCallback
 
 class Repository private constructor(
     private val lectureDao: LectureDao,
@@ -86,25 +86,24 @@ class Repository private constructor(
         }.start()
     }
 
-    fun getStudents(): LiveData<List<Student>> {
-        Thread {
-            val studentsTimeout = cachePreferences.getLong(STUDENTS_TIMEOUT_KEY, Long.MIN_VALUE)
-
-            if (studentsTimeout > System.currentTimeMillis()) {
-                students.postValue(studentDao.getStudents())
-            } else {
-                updateStudentsNow()
-            }
-        }.start()
-
+    fun getStudents(callback: StudentsUpdateCallback? = null): LiveData<List<Student>> {
+        updateStudents(callback)
         return students
     }
 
-    fun updateStudents(callback: ResponseCallback<JsonArray>? = null) = Thread {
-        updateStudentsNow(callback)
+    fun updateStudents(callback: StudentsUpdateCallback? = null) = Thread {
+        val studentsTimeout = cachePreferences.getLong(STUDENTS_TIMEOUT_KEY, Long.MIN_VALUE)
+
+        if (studentsTimeout > System.currentTimeMillis()) {
+            students.postValue(studentDao.getStudents())
+            callback?.onCacheResponse()
+        } else {
+            updateStudentsNow(callback)
+        }
+
     }.start()
 
-    fun updateStudentsNow(callback: ResponseCallback<JsonArray>? = null) {
+    fun updateStudentsNow(callback: StudentsUpdateCallback? = null) {
         try {
             val response = apiService.getGrades(token).execute()
             callback?.onResponse(response)

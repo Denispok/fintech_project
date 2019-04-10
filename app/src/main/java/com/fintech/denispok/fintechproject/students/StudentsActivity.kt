@@ -47,7 +47,7 @@ class StudentsActivity : AppCompatActivity() {
         recyclerView.layoutManager = recyclerLayoutManager
         recyclerView.adapter = recyclerAdapter
 
-        studentsViewModel.getStudents().observe(this, Observer {
+        studentsViewModel.getStudents(StudentsUpdateCallback(this)).observe(this, Observer {
             if (it != null) {
                 recyclerAdapter.students = it
                 recyclerAdapter.notifyItemRangeChanged(0, recyclerAdapter.students.size)

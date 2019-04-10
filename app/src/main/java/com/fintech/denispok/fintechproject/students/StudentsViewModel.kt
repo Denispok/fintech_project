@@ -4,13 +4,12 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import com.fintech.denispok.fintechproject.api.entity.Student
 import com.fintech.denispok.fintechproject.repository.Repository
-import com.fintech.denispok.fintechproject.repository.ResponseCallback
-import com.google.gson.JsonArray
 
 class StudentsViewModel(private val repository: Repository) : ViewModel() {
 
-    fun getStudents(): LiveData<List<Student>> = repository.getStudents()
+    fun getStudents(callback: StudentsUpdateCallback? = null): LiveData<List<Student>> =
+        repository.getStudents(callback)
 
-    fun updateStudents(callback: ResponseCallback<JsonArray>? = null) = repository.updateStudents(callback)
+    fun updateStudents(callback: StudentsUpdateCallback? = null) = repository.updateStudents(callback)
 
 }

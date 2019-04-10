@@ -1,5 +1,6 @@
 package com.fintech.denispok.fintechproject.students
 
+import android.arch.lifecycle.Lifecycle
 import android.widget.Toast
 import com.fintech.denispok.fintechproject.repository.ResponseCallback
 import com.google.gson.JsonArray
@@ -13,8 +14,10 @@ class StudentsUpdateCallback(studentsActivity: StudentsActivity) : ResponseCallb
     override fun onFailure(t: Throwable) {
         studentsActivity.get()?.apply {
             runOnUiThread {
-                Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
                 swipeRefreshLayout.isRefreshing = false
+                if (this.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                    Toast.makeText(this, t.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -22,8 +25,21 @@ class StudentsUpdateCallback(studentsActivity: StudentsActivity) : ResponseCallb
     override fun onResponse(response: Response<JsonArray>) {
         studentsActivity.get()?.apply {
             runOnUiThread {
-                Toast.makeText(this, "We have got a response!", Toast.LENGTH_SHORT).show()
                 swipeRefreshLayout.isRefreshing = false
+                if (this.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                    Toast.makeText(this, "We have got a response!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    fun onCacheResponse() {
+        studentsActivity.get()?.apply {
+            runOnUiThread {
+                swipeRefreshLayout.isRefreshing = false
+                if (this.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                    Toast.makeText(this, "We have got data from cache!", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
