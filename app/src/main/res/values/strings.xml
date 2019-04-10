@@ -16,4 +16,11 @@
     <string name="confirm_dialog_stay">Остаться</string>
     <string name="confirm_dialog_leave">Уйти</string>
     <string name="invalid_profile">Пожалуйста проверьте правильность введенных данных</string>
+
+    <plurals name="plurals_points">
+        <item quantity="one">%.2f балл</item>
+        <item quantity="few">%.2f балла</item>
+        <item quantity="many">%.2f баллов</item>
+        <item quantity="other">%.2f баллов</item>
+    </plurals>
 </resources>

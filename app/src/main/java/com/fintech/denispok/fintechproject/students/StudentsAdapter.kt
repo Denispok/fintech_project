@@ -8,14 +8,38 @@ import android.widget.TextView
 import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.api.entity.Student
 import com.fintech.denispok.fintechproject.customviews.InitialsRoundView
+import kotlin.math.roundToInt
 
-class StudentsAdapter(var students: List<Student>) :
+class StudentsAdapter(students: List<Student>) :
         RecyclerView.Adapter<StudentsAdapter.StudentViewHolder>() {
 
     companion object {
         const val LINEAR_VIEW_TYPE = 0
         const val GRID_VIEW_TYPE = 1
+        const val SORT_TYPE_NONE = 2
+        const val SORT_TYPE_ALPHABET = 3
+        const val SORT_TYPE_POINTS = 4
     }
+
+    var students: List<Student> = students
+        set(value) {
+            field = when (sortType) {
+                SORT_TYPE_ALPHABET -> value.sortedWith(Comparator { o1, o2 -> o1.name.compareTo(o2.name) })
+                SORT_TYPE_POINTS -> value.sortedWith(Comparator { o1, o2 ->
+                    val compared = o2.mark.compareTo(o1.mark)
+                    if (compared == 0) o1.name.compareTo(o2.name)
+                    else compared
+                })
+                else -> value
+            }
+            notifyItemRangeChanged(0, students.size)
+        }
+
+    var sortType = SORT_TYPE_NONE
+        set(value) {
+            field = value
+            students = students
+        }
 
     var viewType = LINEAR_VIEW_TYPE
 
@@ -45,16 +69,17 @@ class StudentsAdapter(var students: List<Student>) :
     override fun getItemViewType(position: Int) = viewType
 
     class StudentViewHolder(itemView: View, val viewType: Int) : RecyclerView.ViewHolder(itemView) {
-        private var roundView: InitialsRoundView = itemView.findViewById(R.id.contacts_item_round_view)
-        private var name: TextView = itemView.findViewById(R.id.contacts_item_name)
-        private var points: TextView? = itemView.findViewById(R.id.contacts_item_points)
+        private var roundView: InitialsRoundView = itemView.findViewById(R.id.students_item_round_view)
+        private var name: TextView = itemView.findViewById(R.id.students_item_name)
+        private var points: TextView? = itemView.findViewById(R.id.students_item_points)
 
         fun bind(student: Student) {
             roundView.parseInitials(student.name)
             roundView.roundColor = student.color
             name.text = student.name
             if (viewType == LINEAR_VIEW_TYPE) {
-                points?.text = student.mark.toString()
+                val mark = (student.mark * 100).roundToInt()
+                points?.text = itemView.context.resources.getQuantityString(R.plurals.plurals_points, mark, mark / 100f)
             }
         }
     }

@@ -13,11 +13,11 @@ import com.fintech.denispok.fintechproject.repository.dao.TaskDao
 import com.fintech.denispok.fintechproject.students.StudentsUpdateCallback
 
 class Repository private constructor(
-    private val lectureDao: LectureDao,
-    private val taskDao: TaskDao,
-    private val studentDao: StudentDao,
-    private val cachePreferences: SharedPreferences,
-    private val apiService: ApiService
+        private val lectureDao: LectureDao,
+        private val taskDao: TaskDao,
+        private val studentDao: StudentDao,
+        private val cachePreferences: SharedPreferences,
+        private val apiService: ApiService
 ) {
 
     companion object {
@@ -28,13 +28,14 @@ class Repository private constructor(
         private var instance: Repository? = null
 
         fun getInstance(
-            lectureDao: LectureDao,
-            taskDao: TaskDao,
-            studentDao: StudentDao,
-            authPreferences: SharedPreferences,
-            apiService: ApiService
+                lectureDao: LectureDao,
+                taskDao: TaskDao,
+                studentDao: StudentDao,
+                authPreferences: SharedPreferences,
+                apiService: ApiService
         ) = instance ?: synchronized(this) {
-            instance ?: Repository(lectureDao, taskDao, studentDao, authPreferences, apiService).also { instance = it }
+            instance ?: Repository(lectureDao, taskDao, studentDao, authPreferences, apiService)
+                    .also { instance = it }
         }
     }
 
@@ -94,10 +95,11 @@ class Repository private constructor(
     fun updateStudents(callback: StudentsUpdateCallback? = null) = Thread {
         val studentsTimeout = cachePreferences.getLong(STUDENTS_TIMEOUT_KEY, Long.MIN_VALUE)
 
-        if (studentsTimeout > System.currentTimeMillis()) {
+        if (studentsTimeout > System.currentTimeMillis() || students.value == null) {
             students.postValue(studentDao.getStudents())
             callback?.onCacheResponse()
-        } else {
+        }
+        if (studentsTimeout <= System.currentTimeMillis()) {
             updateStudentsNow(callback)
         }
 
@@ -117,19 +119,19 @@ class Repository private constructor(
                     grades.forEach {
                         val jsonStudent = it.asJsonObject
                         students.add(
-                            Student(
-                                jsonStudent["student_id"].asLong,
-                                jsonStudent["student"].asString,
-                                jsonStudent["grades"].asJsonArray.last().asJsonObject["mark"].asDouble
-                            )
+                                Student(
+                                        jsonStudent["student_id"].asLong,
+                                        jsonStudent["student"].asString,
+                                        jsonStudent["grades"].asJsonArray.last().asJsonObject["mark"].asDouble
+                                )
                         )
                     }
 
                     studentDao.deleteAllStudents()
                     studentDao.insertStudents(students)
                     cachePreferences.edit()
-                        .putLong(STUDENTS_TIMEOUT_KEY, System.currentTimeMillis() + STUDENTS_CACHE_LIFETIME)
-                        .apply()
+                            .putLong(STUDENTS_TIMEOUT_KEY, System.currentTimeMillis() + STUDENTS_CACHE_LIFETIME)
+                            .apply()
                     this@Repository.students.postValue(studentDao.getStudents())
                 }
             }

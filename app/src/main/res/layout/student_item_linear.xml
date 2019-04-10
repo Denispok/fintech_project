@@ -6,7 +6,7 @@
     android:padding="8dp">
 
     <com.fintech.denispok.fintechproject.customviews.InitialsRoundView
-        android:id="@+id/contacts_item_round_view"
+        android:id="@+id/students_item_round_view"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:textColor="@android:color/white"
@@ -16,20 +16,21 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/contacts_item_name"
+        android:id="@+id/students_item_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:maxLines="2"
         android:textColor="@android:color/black"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/contacts_item_points"
-        app:layout_constraintStart_toEndOf="@id/contacts_item_round_view"
+        app:layout_constraintEnd_toStartOf="@id/students_item_points"
+        app:layout_constraintStart_toEndOf="@id/students_item_round_view"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/contacts_item_points"
+        android:id="@+id/students_item_points"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"

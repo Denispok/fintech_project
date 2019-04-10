@@ -20,12 +20,18 @@ class StudentsActivity : AppCompatActivity() {
     private lateinit var recyclerAdapter: StudentsAdapter
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.contacts_action_bar, menu)
+        menuInflater.inflate(R.menu.students_action_bar, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.contacts_action_bar_change_view) {
+        if (item?.itemId == R.id.students_action_bar_sort_alphabet) {
+            recyclerAdapter.sortType = StudentsAdapter.SORT_TYPE_ALPHABET
+            return true
+        } else if (item?.itemId == R.id.students_action_bar_sort_points) {
+            recyclerAdapter.sortType = StudentsAdapter.SORT_TYPE_POINTS
+            return true
+        } else if (item?.itemId == R.id.students_action_bar_change_view) {
             changeView()
             return true
         }
@@ -35,6 +41,7 @@ class StudentsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_students)
+        supportActionBar?.title = "Успеваемость"
 
         swipeRefreshLayout = findViewById(R.id.activity_students)
         recyclerView = findViewById(R.id.students_recycler_view)
@@ -50,7 +57,6 @@ class StudentsActivity : AppCompatActivity() {
         studentsViewModel.getStudents(StudentsUpdateCallback(this)).observe(this, Observer {
             if (it != null) {
                 recyclerAdapter.students = it
-                recyclerAdapter.notifyItemRangeChanged(0, recyclerAdapter.students.size)
             }
         })
 
