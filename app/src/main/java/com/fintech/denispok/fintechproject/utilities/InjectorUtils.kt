@@ -8,7 +8,7 @@ import com.fintech.denispok.fintechproject.repository.Repository
 object InjectorUtils {
 
     fun provideProfileViewModelFactory(applicationContext: Context): LecturesViewModelFactory {
-        val database = DatabaseProvider.getInstance(applicationContext)
+        val database = DatabaseProvider.database
         val authPreferences = applicationContext.getSharedPreferences("auth", Context.MODE_PRIVATE)
         val repository = Repository.getInstance(database.lectureDao(), database.taskDao(), authPreferences)
         return LecturesViewModelFactory(repository)
