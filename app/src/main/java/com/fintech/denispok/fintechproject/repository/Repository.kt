@@ -32,10 +32,10 @@ class Repository private constructor(
                 lectureDao: LectureDao,
                 taskDao: TaskDao,
                 studentDao: StudentDao,
-                authPreferences: SharedPreferences, //
+                cachePreferences: SharedPreferences,
                 apiService: ApiService
         ) = instance ?: synchronized(this) {
-            instance ?: Repository(lectureDao, taskDao, studentDao, authPreferences, apiService)
+            instance ?: Repository(lectureDao, taskDao, studentDao, cachePreferences, apiService)
                     .also { instance = it }
         }
     }
