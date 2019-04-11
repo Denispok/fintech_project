@@ -11,7 +11,7 @@ import com.fintech.denispok.fintechproject.students.StudentsViewModelFactory
 object InjectorUtils {
 
     fun provideRepository(applicationContext: Context): Repository {
-        val database = DatabaseProvider.getInstance(applicationContext)
+        val database = DatabaseProvider.database
         val cachePreferences = applicationContext.getSharedPreferences("cache", Context.MODE_PRIVATE)
         val retrofit = RetrofitProvider.getInstance()
         val apiService = retrofit.create(ApiService::class.java)

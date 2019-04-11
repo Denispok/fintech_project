@@ -3,6 +3,7 @@ package com.fintech.denispok.fintechproject.repository
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
+import android.util.Log
 import com.fintech.denispok.fintechproject.api.ApiService
 import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.api.entity.Student
@@ -31,7 +32,7 @@ class Repository private constructor(
                 lectureDao: LectureDao,
                 taskDao: TaskDao,
                 studentDao: StudentDao,
-                authPreferences: SharedPreferences,
+                authPreferences: SharedPreferences, //
                 apiService: ApiService
         ) = instance ?: synchronized(this) {
             instance ?: Repository(lectureDao, taskDao, studentDao, authPreferences, apiService)
@@ -65,24 +66,28 @@ class Repository private constructor(
 
     fun updateLectures() {
         Thread {
-            val response = apiService.getLectures(token).execute()
+            try {
+                val response = apiService.getLectures(token).execute()
 
-            if (response.isSuccessful) {
-                response.body()?.also {
-                    lectureDao.deleteAllLectures()
-                    lectureDao.insertLectures(it.lectures)
-                    lectures.postValue(lectureDao.getLectures())
+                if (response.isSuccessful) {
+                    response.body()?.also {
+                        lectureDao.deleteAllLectures()
+                        lectureDao.insertLectures(it.lectures)
+                        lectures.postValue(lectureDao.getLectures())
 
-                    taskDao.deleteAllTasks()
-                    val tasks = mutableListOf<Task>()
-                    it.lectures.forEach { lecture ->
-                        lecture.tasks?.forEach { task ->
-                            task.lectureId = lecture.id
-                            tasks.add(task)
+                        taskDao.deleteAllTasks()
+                        val tasks = mutableListOf<Task>()
+                        it.lectures.forEach { lecture ->
+                            lecture.tasks.forEach { task ->
+                                task.lectureId = lecture.id
+                                tasks.add(task)
+                            }
                         }
+                        taskDao.insertTasks(tasks)
                     }
-                    taskDao.insertTasks(tasks)
                 }
+            } catch (t: Throwable) {
+                Log.d("REPO", t.message)
             }
         }.start()
     }

@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName
 data class Lecture(
     @PrimaryKey @SerializedName("id") var id: Int,
     @SerializedName("title") var title: String,
-    @Ignore @SerializedName("tasks") var tasks: List<Task>? = null
+    @Ignore @SerializedName("tasks") var tasks: List<Task> = emptyList()
 ) {
 
     constructor() : this(0, "")
