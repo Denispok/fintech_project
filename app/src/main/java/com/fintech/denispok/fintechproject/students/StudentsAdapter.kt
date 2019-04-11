@@ -16,6 +16,7 @@ class StudentsAdapter(students: List<Student>) :
     companion object {
         const val LINEAR_VIEW_TYPE = 0
         const val GRID_VIEW_TYPE = 1
+
         const val SORT_TYPE_NONE = 2
         const val SORT_TYPE_ALPHABET = 3
         const val SORT_TYPE_POINTS = 4
@@ -23,22 +24,27 @@ class StudentsAdapter(students: List<Student>) :
 
     var students: List<Student> = students
         set(value) {
-            field = when (sortType) {
-                SORT_TYPE_ALPHABET -> value.sortedWith(Comparator { o1, o2 -> o1.name.compareTo(o2.name) })
-                SORT_TYPE_POINTS -> value.sortedWith(Comparator { o1, o2 ->
-                    val compared = o2.mark.compareTo(o1.mark)
-                    if (compared == 0) o1.name.compareTo(o2.name)
-                    else compared
-                })
-                else -> value
-            }
-            notifyItemRangeChanged(0, students.size)
+            field = value
+            filteredStudents = field
+        }
+
+    private val comparator = StudentsComparator()
+    var filteredStudents: List<Student> = students
+        set(value) {
+            field = value.sortedWith(comparator).filter { it.name.contains(filter, ignoreCase = true) }
+            notifyDataSetChanged()
         }
 
     var sortType = SORT_TYPE_NONE
         set(value) {
             field = value
-            students = students
+            filteredStudents = filteredStudents
+        }
+
+    var filter = ""
+        set(value) {
+            field = value
+            filteredStudents = students
         }
 
     var viewType = LINEAR_VIEW_TYPE
@@ -61,10 +67,10 @@ class StudentsAdapter(students: List<Student>) :
     }
 
     override fun onBindViewHolder(viewHolder: StudentViewHolder, position: Int) {
-        viewHolder.bind(students[position])
+        viewHolder.bind(filteredStudents[position])
     }
 
-    override fun getItemCount() = students.size
+    override fun getItemCount() = filteredStudents.size
 
     override fun getItemViewType(position: Int) = viewType
 
@@ -81,6 +87,18 @@ class StudentsAdapter(students: List<Student>) :
                 val mark = (student.mark * 100).roundToInt()
                 points?.text = itemView.context.resources.getQuantityString(R.plurals.plurals_points, mark, mark / 100f)
             }
+        }
+    }
+
+    inner class StudentsComparator : Comparator<Student> {
+        override fun compare(o1: Student, o2: Student): Int = when {
+            sortType == SORT_TYPE_ALPHABET && filter.isEmpty() -> o1.name.compareTo(o2.name)
+            sortType == SORT_TYPE_POINTS || !filter.isEmpty() -> {
+                val compared = o2.mark.compareTo(o1.mark)
+                if (compared == 0) o1.name.compareTo(o2.name)
+                else compared
+            }
+            else -> 0
         }
     }
 }

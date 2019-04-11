@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import com.fintech.denispok.fintechproject.R
@@ -21,6 +22,22 @@ class StudentsActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.students_action_bar, menu)
+
+        val myActionMenuItem = menu!!.findItem(R.id.students_action_bar_search)
+        val searchView = myActionMenuItem.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                recyclerAdapter.filter = query
+                return false
+            }
+
+            override fun onQueryTextChange(s: String): Boolean {
+                recyclerAdapter.filter = s
+                return false
+            }
+        })
+
         return true
     }
 

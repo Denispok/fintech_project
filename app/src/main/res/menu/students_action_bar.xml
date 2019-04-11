@@ -20,4 +20,11 @@
         android:title="Change View"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/students_action_bar_search"
+        android:icon="@drawable/ic_baseline_search_24px"
+        android:title="Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+
 </menu>
