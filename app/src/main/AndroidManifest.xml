@@ -17,7 +17,12 @@
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
+            android:label="@string/app_name"/>
+
+        <activity
+            android:name="com.fintech.denispok.fintechproject.ui.auth.AuthActivity"
+            android:noHistory="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,20 +32,10 @@
         </activity>
 
         <activity
-            android:name=".contacts.ContactsActivity"
-            android:label="@string/app_name"></activity>
-
-        <activity
-            android:name=".auth.AuthActivity"
-            android:label="@string/app_name"></activity>
-
-        <activity
-            android:name=".lectures.LecturesActivity"
+            android:name="com.fintech.denispok.fintechproject.ui.lectures.LecturesActivity"
             android:label="@string/app_name" />
-        <activity android:name=".lectures.tasks.TaskActivity" />
-        <activity android:name=".students.StudentsActivity" />
-
-        <service android:name=".contacts.ContactsIntentService" />
+        <activity android:name="com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity" />
+        <activity android:name="com.fintech.denispok.fintechproject.ui.students.StudentsActivity" />
 
     </application>
 

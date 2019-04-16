@@ -3,10 +3,11 @@ package com.fintech.denispok.fintechproject.utilities
 import android.content.Context
 import com.fintech.denispok.fintechproject.api.ApiService
 import com.fintech.denispok.fintechproject.api.RetrofitProvider
-import com.fintech.denispok.fintechproject.lectures.LecturesViewModelFactory
+import com.fintech.denispok.fintechproject.ui.auth.AuthViewModelFactory
+import com.fintech.denispok.fintechproject.ui.lectures.LecturesViewModelFactory
 import com.fintech.denispok.fintechproject.repository.DatabaseProvider
 import com.fintech.denispok.fintechproject.repository.Repository
-import com.fintech.denispok.fintechproject.students.StudentsViewModelFactory
+import com.fintech.denispok.fintechproject.ui.students.StudentsViewModelFactory
 
 object InjectorUtils {
 
@@ -29,4 +30,7 @@ object InjectorUtils {
 
     fun provideStudentsViewModelFactory(applicationContext: Context): StudentsViewModelFactory =
             StudentsViewModelFactory(provideRepository(applicationContext))
+
+    fun provideAuthViewModelFactory(applicationContext: Context): AuthViewModelFactory =
+            AuthViewModelFactory(provideRepository(applicationContext))
 }

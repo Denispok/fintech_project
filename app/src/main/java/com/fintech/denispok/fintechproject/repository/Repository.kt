@@ -5,13 +5,14 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
 import android.util.Log
 import com.fintech.denispok.fintechproject.api.ApiService
+import com.fintech.denispok.fintechproject.api.AuthRequestBody
 import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.api.entity.Student
 import com.fintech.denispok.fintechproject.api.entity.Task
 import com.fintech.denispok.fintechproject.repository.dao.LectureDao
 import com.fintech.denispok.fintechproject.repository.dao.StudentDao
 import com.fintech.denispok.fintechproject.repository.dao.TaskDao
-import com.fintech.denispok.fintechproject.students.StudentsUpdateCallback
+import com.fintech.denispok.fintechproject.ui.students.StudentsUpdateCallback
 
 class Repository private constructor(
         private val lectureDao: LectureDao,
@@ -42,11 +43,15 @@ class Repository private constructor(
 
     private val lectures: MutableLiveData<List<Lecture>> = MutableLiveData()
     private val students: MutableLiveData<List<Student>> = MutableLiveData()
-    private var token: String = ""
+    var token: String = ""
         get() {
             if (field.isEmpty())
                 field = cachePreferences.getString("token", "") ?: ""
             return field
+        }
+        set(value) {
+            field = value
+            cachePreferences.edit().putString("token", field).apply()
         }
 
     fun getLectures(): LiveData<List<Lecture>> {
@@ -113,9 +118,9 @@ class Repository private constructor(
     fun updateStudentsNow(callback: StudentsUpdateCallback? = null) {
         try {
             val response = apiService.getGrades(token).execute()
-            callback?.onResponse(response)
 
             if (response.isSuccessful) {
+                callback?.onServerResponse()
 
                 response.body()?.also { body ->
                     val grades = body[1].asJsonObject.getAsJsonArray("grades")
@@ -141,7 +146,7 @@ class Repository private constructor(
                 }
             }
         } catch (t: Throwable) {
-            callback?.onFailure(t)
+            callback?.onFailure(t.message)
         }
     }
 
@@ -153,4 +158,5 @@ class Repository private constructor(
         return tasksLiveData
     }
 
+    fun authCall(authRequestBody: AuthRequestBody) = apiService.auth(authRequestBody)
 }
