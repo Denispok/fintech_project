@@ -20,10 +20,10 @@ class StudentsActivity : AppCompatActivity() {
     private lateinit var recyclerLayoutManager: GridLayoutManager
     private lateinit var recyclerAdapter: StudentsAdapter
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.students_action_bar, menu)
 
-        val myActionMenuItem = menu!!.findItem(R.id.students_action_bar_search)
+        val myActionMenuItem = menu.findItem(R.id.students_action_bar_search)
         val searchView = myActionMenuItem.actionView as SearchView
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -41,14 +41,14 @@ class StudentsActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.students_action_bar_sort_alphabet) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.students_action_bar_sort_alphabet) {
             recyclerAdapter.sortType = StudentsAdapter.SORT_TYPE_ALPHABET
             return true
-        } else if (item?.itemId == R.id.students_action_bar_sort_points) {
+        } else if (item.itemId == R.id.students_action_bar_sort_points) {
             recyclerAdapter.sortType = StudentsAdapter.SORT_TYPE_POINTS
             return true
-        } else if (item?.itemId == R.id.students_action_bar_change_view) {
+        } else if (item.itemId == R.id.students_action_bar_change_view) {
             changeView()
             return true
         }
