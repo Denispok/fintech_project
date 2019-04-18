@@ -2,52 +2,71 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorGrayPrimary">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/auth_textInputLayout_email"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/auth_logo"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/auth_textInputLayout_password"
+        android:layout_marginStart="@dimen/auth_logo"
+        android:layout_marginTop="@dimen/auth_logo"
+        android:layout_marginEnd="@dimen/auth_logo"
+        android:adjustViewBounds="true"
+        android:src="@drawable/auth_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/auth_textInputEditText_email"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:hint="Почта" />
+    <EditText
+        android:id="@+id/auth_editText_email"
+        style="@style/authEditText"
+        android:hint="@string/login"
+        android:inputType="textEmailAddress"
+        app:layout_constraintBottom_toTopOf="@id/auth_editText_password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/auth_logo"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/auth_textInputLayout_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <EditText
+        android:id="@+id/auth_editText_password"
+        style="@style/authEditText"
+        android:layout_marginTop="8dp"
+        android:hint="@string/password"
+        android:inputType="textPassword"
         app:layout_constraintBottom_toTopOf="@id/auth_loginButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/auth_textInputLayout_email">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/auth_textInputEditText_password"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:hint="Пароль" />
-
-    </android.support.design.widget.TextInputLayout>
+        app:layout_constraintTop_toBottomOf="@id/auth_editText_email" />
 
     <Button
         android:id="@+id/auth_loginButton"
+        android:layout_width="296dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/auth_button_background"
+        android:text="@string/enter"
+        app:layout_constraintBottom_toTopOf="@id/auth_restorePassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/auth_editText_password" />
+
+    <TextView
+        android:id="@+id/auth_restorePassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Войти"
+        android:layout_marginTop="20dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="4dp"
+        android:text="@string/restore_password"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/auth_textInputLayout_password" />
+        app:layout_constraintTop_toBottomOf="@id/auth_loginButton" />
 
 </android.support.constraint.ConstraintLayout>

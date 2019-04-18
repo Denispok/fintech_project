@@ -31,6 +31,7 @@ class AuthViewModel(private val repository: Repository) : ViewModel() {
     }
 
     fun auth(email: String, password: String, callback: AuthCallback) {
+        stateMutableLiveData.postValue(State.CONNECTING)
         repository.authCall(AuthRequestBody(email, password)).enqueue(object : Callback<User> {
             override fun onFailure(call: Call<User>, t: Throwable) {
                 Log.e("FAIL", t.message)
@@ -48,11 +49,13 @@ class AuthViewModel(private val repository: Repository) : ViewModel() {
                         stateMutableLiveData.postValue(State.SUCCESS)
                         callback.onSuccess()
                     } else {
+                        stateMutableLiveData.postValue(State.DEFAULT)
                         callback.onFailure("Ошибка Авторизации")
                     }
 
                 } else if (response.code() == 403) {
                     val errorResponse = JSONObject(response.errorBody()?.string()).getString("detail")
+                    stateMutableLiveData.postValue(State.DEFAULT)
                     callback.onFailure(errorResponse)
                 }
             }

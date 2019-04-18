@@ -15,7 +15,6 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
-        supportActionBar?.title = "Вход"
 
         val authViewModelFactory = InjectorUtils.provideAuthViewModelFactory(applicationContext)
         val authViewModel = ViewModelProvider(this, authViewModelFactory).get(AuthViewModel::class.java)
@@ -23,10 +22,14 @@ class AuthActivity : AppCompatActivity() {
         authViewModel.getState().observe(this, Observer {
             when (it) {
                 AuthViewModel.State.DEFAULT -> {
-                    // TODO
+                    auth_editText_email.isEnabled = true
+                    auth_editText_password.isEnabled = true
+                    auth_loginButton.isEnabled = true
                 }
                 AuthViewModel.State.CONNECTING -> {
-                    // TODO
+                    auth_editText_email.isEnabled = false
+                    auth_editText_password.isEnabled = false
+                    auth_loginButton.isEnabled = false
                 }
                 AuthViewModel.State.SUCCESS -> {
                     startActivity(Intent(this, MainActivity::class.java))
@@ -37,8 +40,8 @@ class AuthActivity : AppCompatActivity() {
 
         auth_loginButton.setOnClickListener {
             authViewModel.auth(
-                    auth_textInputLayout_email?.editText?.text.toString(),
-                    auth_textInputLayout_password?.editText?.text.toString(),
+                    auth_editText_email.text.toString(),
+                    auth_editText_password.text.toString(),
                     AuthCallback(this))
         }
     }
