@@ -11,7 +11,7 @@ import com.fintech.denispok.fintechproject.api.entity.Task
 import com.fintech.denispok.fintechproject.repository.dao.LectureDao
 import com.fintech.denispok.fintechproject.repository.dao.StudentDao
 import com.fintech.denispok.fintechproject.repository.dao.TaskDao
-import com.fintech.denispok.fintechproject.students.StudentsUpdateCallback
+import com.fintech.denispok.fintechproject.ui.students.StudentsUpdateCallback
 
 class Repository private constructor(
         private val lectureDao: LectureDao,
