@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hasValidToken(): Boolean {
-        val preferences = getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val preferences = getSharedPreferences("cache", Context.MODE_PRIVATE)
         return preferences.getString("token", null) != null
     }
 

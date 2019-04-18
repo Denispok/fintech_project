@@ -30,7 +30,7 @@ class ProfileFragment : Fragment(), MainActivity.IOnTabSelected {
     lateinit var apiService: ApiService
 
     override fun onTabSelected() {
-        val preferences = context!!.getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val preferences = context!!.getSharedPreferences("cache", Context.MODE_PRIVATE)
         val retrofit = RetrofitProvider.getInstance()
         apiService = retrofit.create(ApiService::class.java)
         val userCall = apiService.getUser(preferences.getString("token", "")!!)

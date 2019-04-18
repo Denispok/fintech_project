@@ -38,6 +38,7 @@
             android:name=".lectures.LecturesActivity"
             android:label="@string/app_name" />
         <activity android:name=".lectures.tasks.TaskActivity" />
+        <activity android:name=".students.StudentsActivity" />
 
         <service android:name=".contacts.ContactsIntentService" />
 

@@ -17,7 +17,7 @@ class AuthActivity : AppCompatActivity() {
         setContentView(R.layout.activity_auth)
         supportActionBar?.title = "Вход"
 
-        val sharedPreferences = getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("cache", Context.MODE_PRIVATE)
         val cookiePattern = Pattern.compile("anygen=[^;]+")
 
         auth_loginButton.setOnClickListener {

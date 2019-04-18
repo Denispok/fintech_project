@@ -11,9 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import com.fintech.denispok.fintechproject.R
-import com.fintech.denispok.fintechproject.contacts.ContactsActivity
 import com.fintech.denispok.fintechproject.customviews.BadgeView
 import com.fintech.denispok.fintechproject.lectures.LecturesActivity
+import com.fintech.denispok.fintechproject.students.StudentsActivity
 import java.lang.ref.WeakReference
 
 class CoursesFragment : Fragment() {
@@ -31,7 +31,7 @@ class CoursesFragment : Fragment() {
         badgesLayout = view.findViewById(R.id.badges_layout)
 
         view.findViewById<ConstraintLayout>(R.id.progress_details).setOnClickListener {
-            startActivity(Intent(context, ContactsActivity::class.java))
+            startActivity(Intent(context, StudentsActivity::class.java))
         }
 
         view.findViewById<ConstraintLayout>(R.id.rating_details).setOnClickListener {

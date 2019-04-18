@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/students_action_bar_sort_alphabet"
+        android:icon="@drawable/ic_baseline_text_rotate_vertical_24px"
+        android:title="Sort by name"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/students_action_bar_sort_points"
+        android:icon="@drawable/ic_baseline_looks_one_24px"
+        android:title="Sort by points"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/students_action_bar_change_view"
+        android:icon="@drawable/ic_baseline_apps_24px"
+        android:title="Change View"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/students_action_bar_search"
+        android:icon="@drawable/ic_baseline_search_24px"
+        android:title="Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+
+</menu>
