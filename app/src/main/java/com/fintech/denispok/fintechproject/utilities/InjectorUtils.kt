@@ -3,10 +3,11 @@ package com.fintech.denispok.fintechproject.utilities
 import android.content.Context
 import com.fintech.denispok.fintechproject.api.ApiService
 import com.fintech.denispok.fintechproject.api.RetrofitProvider
-import com.fintech.denispok.fintechproject.ui.auth.AuthViewModelFactory
-import com.fintech.denispok.fintechproject.ui.lectures.LecturesViewModelFactory
 import com.fintech.denispok.fintechproject.repository.DatabaseProvider
 import com.fintech.denispok.fintechproject.repository.Repository
+import com.fintech.denispok.fintechproject.ui.auth.AuthViewModelFactory
+import com.fintech.denispok.fintechproject.ui.lectures.LecturesViewModelFactory
+import com.fintech.denispok.fintechproject.ui.profile.ProfileViewModelFactory
 import com.fintech.denispok.fintechproject.ui.students.StudentsViewModelFactory
 
 object InjectorUtils {
@@ -20,12 +21,13 @@ object InjectorUtils {
                 database.lectureDao(),
                 database.taskDao(),
                 database.studentDao(),
+                database.userDao(),
                 cachePreferences,
                 apiService
         )
     }
 
-    fun provideProfileViewModelFactory(applicationContext: Context): LecturesViewModelFactory =
+    fun provideLecturesViewModelFactory(applicationContext: Context): LecturesViewModelFactory =
             LecturesViewModelFactory(provideRepository(applicationContext))
 
     fun provideStudentsViewModelFactory(applicationContext: Context): StudentsViewModelFactory =
@@ -33,4 +35,7 @@ object InjectorUtils {
 
     fun provideAuthViewModelFactory(applicationContext: Context): AuthViewModelFactory =
             AuthViewModelFactory(provideRepository(applicationContext))
+
+    fun provideProfileViewModelFactory(applicationContext: Context): ProfileViewModelFactory =
+            ProfileViewModelFactory(provideRepository(applicationContext))
 }

@@ -28,7 +28,7 @@ class LecturesActivity : AppCompatActivity() {
         swipeRefreshLayout = findViewById(R.id.lectures_swipeRefreshLayout)
         recyclerView = findViewById(R.id.lectures_recyclerView)
 
-        val lecturesViewModelFactory = InjectorUtils.provideProfileViewModelFactory(applicationContext)
+        val lecturesViewModelFactory = InjectorUtils.provideLecturesViewModelFactory(applicationContext)
         val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
 
         swipeRefreshLayout.setOnRefreshListener {

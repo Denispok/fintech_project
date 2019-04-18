@@ -1,4 +1,4 @@
-package com.fintech.denispok.fintechproject.ui.profile
+package com.fintech.denispok.fintechproject.ui.profile.edit
 
 import android.app.Dialog
 import android.os.Bundle
