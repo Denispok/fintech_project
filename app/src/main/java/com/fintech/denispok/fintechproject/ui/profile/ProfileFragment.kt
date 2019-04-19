@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.fintech.denispok.fintechproject.utilities.InjectorUtils
 
 class ProfileFragment : Fragment() {
 
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var profileImageView: ImageView
     private lateinit var firstNameView: TextView
     private lateinit var lastNameView: TextView
@@ -32,12 +34,18 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
+        swipeRefreshLayout = view.findViewById(R.id.profile_swipeRefreshLayout)
         profileImageView = view.findViewById(R.id.profile_image)
         firstNameView = view.findViewById(R.id.first_name)
         lastNameView = view.findViewById(R.id.last_name)
         middleNameView = view.findViewById(R.id.middle_name)
 
+        swipeRefreshLayout.setOnRefreshListener {
+            profileViewModel.updateUserCache(ProfileResponseCallback(this))
+        }
+
         profileViewModel.getUser(ProfileResponseCallback(this)).observe(this, Observer { user ->
+            swipeRefreshLayout.isRefreshing = false
             user?.apply {
                 firstNameView.text = firstName
                 lastNameView.text = lastName

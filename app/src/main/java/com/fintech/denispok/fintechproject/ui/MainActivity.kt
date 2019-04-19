@@ -27,7 +27,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager
     private lateinit var viewPagerAdapter: MainFragmentAdapter
     private lateinit var bottomNavigationView: BottomNavigationView
-    private var currentTab = DEFAULT_TAB
+    var currentTab = DEFAULT_TAB
+        private set(value) {
+            field = value
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
