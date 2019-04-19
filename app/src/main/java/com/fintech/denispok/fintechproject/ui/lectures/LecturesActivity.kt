@@ -32,7 +32,7 @@ class LecturesActivity : AppCompatActivity() {
         val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
 
         swipeRefreshLayout.setOnRefreshListener {
-            lecturesViewModel.updateLectures(LecturesResponseCallback(this))
+            lecturesViewModel.updateLecturesCache(LecturesResponseCallback(this))
         }
 
         val layoutManager = LinearLayoutManager(this)
@@ -48,7 +48,7 @@ class LecturesActivity : AppCompatActivity() {
         recyclerView.adapter = recyclerAdapter
         recyclerView.addItemDecoration(DividerItemDecoration(this, layoutManager.orientation))
 
-        lecturesViewModel.getLectures().observe(this, Observer {
+        lecturesViewModel.getLectures(LecturesResponseCallback(this)).observe(this, Observer {
             swipeRefreshLayout.isRefreshing = false
             if (it != null) {
                 recyclerAdapter.lectures = it

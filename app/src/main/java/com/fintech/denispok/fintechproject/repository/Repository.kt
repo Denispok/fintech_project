@@ -27,6 +27,7 @@ class Repository private constructor(
 
     companion object {
         const val CACHE_LIFETIME = 10_000L
+        const val LECTURES_TIMEOUT_KEY = "lectures_timeout"
         const val STUDENTS_TIMEOUT_KEY = "students_timeout"
         const val USER_TIMEOUT_KEY = "user_timeout"
 
@@ -67,49 +68,52 @@ class Repository private constructor(
         }
 
     fun getLectures(callback: ResponseCallback? = null): LiveData<List<Lecture>> {
-        if (lectures.value == null) {
-            Thread {
-                val cachedLectures = lectureDao.getLectures()
-
-                if (cachedLectures.isEmpty()) {
-                    updateLecturesFromServer(callback)
-                } else {
-                    lectures.postValue(cachedLectures)
-                }
-            }.start()
-        }
+        if (lectures.value == null) updateLecturesCache(callback)
         return lectures
     }
 
+    fun updateLecturesCache(callback: ResponseCallback? = null) = Thread {
+        val lecturesTimeout = cachePreferences.getLong(LECTURES_TIMEOUT_KEY, Long.MIN_VALUE)
+
+        if (lecturesTimeout > System.currentTimeMillis() || lectures.value == null) {
+            lectures.postValue(lectureDao.getLectures())
+        }
+        if (lecturesTimeout <= System.currentTimeMillis()) {
+            updateLecturesFromServer(callback)
+        }
+
+    }.start()
+
     fun updateLecturesFromServer(callback: ResponseCallback? = null) {
-        Thread {
-            try {
-                val response = apiService.getLectures(token).execute()
+        try {
+            val response = apiService.getLectures(token).execute()
 
-                if (response.isSuccessful) {
-                    response.body()?.also {
-                        lectureDao.deleteAllLectures()
-                        lectureDao.insertLectures(it.lectures)
-                        lectures.postValue(lectureDao.getLectures())
+            if (response.isSuccessful) {
+                response.body()?.also {
+                    lectureDao.deleteAllLectures()
+                    lectureDao.insertLectures(it.lectures)
+                    lectures.postValue(lectureDao.getLectures())
 
-                        taskDao.deleteAllTasks()
-                        val tasks = mutableListOf<Task>()
-                        it.lectures.forEach { lecture ->
-                            lecture.tasks.forEach { task ->
-                                task.lectureId = lecture.id
-                                tasks.add(task)
-                            }
+                    taskDao.deleteAllTasks()
+                    val tasks = mutableListOf<Task>()
+                    it.lectures.forEach { lecture ->
+                        lecture.tasks.forEach { task ->
+                            task.lectureId = lecture.id
+                            tasks.add(task)
                         }
-                        taskDao.insertTasks(tasks)
                     }
-                } else {
-                    callback?.onFailure()
+                    taskDao.insertTasks(tasks)
+                    cachePreferences.edit()
+                            .putLong(LECTURES_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
+                            .apply()
                 }
-            } catch (t: Throwable) {
-                Log.d("REPO", t.message)
-                callback?.onFailure(t.message)
+            } else {
+                callback?.onFailure()
             }
-        }.start()
+        } catch (t: Throwable) {
+            Log.d("REPO", t.message)
+            callback?.onFailure(t.message)
+        }
     }
 
     fun getStudents(callback: StudentsUpdateCallback? = null): LiveData<List<Student>> {
