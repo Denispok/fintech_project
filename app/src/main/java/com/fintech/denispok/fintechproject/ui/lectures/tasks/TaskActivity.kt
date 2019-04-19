@@ -32,7 +32,7 @@ class TaskActivity : AppCompatActivity() {
         recyclerView.addItemDecoration(DividerItemDecoration(this, layoutManager.orientation))
 
         val lectureId = intent.getIntExtra(EXTRA_LECTURE_KEY, 0)
-        val lecturesViewModelFactory = InjectorUtils.provideProfileViewModelFactory(applicationContext)
+        val lecturesViewModelFactory = InjectorUtils.provideLecturesViewModelFactory(applicationContext)
         val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
         lecturesViewModel.getTasks(lectureId).observe(this, Observer {
             if (it != null) {

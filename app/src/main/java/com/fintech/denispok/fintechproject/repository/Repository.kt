@@ -66,13 +66,13 @@ class Repository private constructor(
             cachePreferences.edit().putString("token", field).apply()
         }
 
-    fun getLectures(): LiveData<List<Lecture>> {
+    fun getLectures(callback: ResponseCallback? = null): LiveData<List<Lecture>> {
         if (lectures.value == null) {
             Thread {
                 val cachedLectures = lectureDao.getLectures()
 
                 if (cachedLectures.isEmpty()) {
-                    updateLectures()
+                    updateLecturesFromServer(callback)
                 } else {
                     lectures.postValue(cachedLectures)
                 }
@@ -81,7 +81,7 @@ class Repository private constructor(
         return lectures
     }
 
-    fun updateLectures() {
+    fun updateLecturesFromServer(callback: ResponseCallback? = null) {
         Thread {
             try {
                 val response = apiService.getLectures(token).execute()
@@ -102,9 +102,12 @@ class Repository private constructor(
                         }
                         taskDao.insertTasks(tasks)
                     }
+                } else {
+                    callback?.onFailure()
                 }
             } catch (t: Throwable) {
                 Log.d("REPO", t.message)
+                callback?.onFailure(t.message)
             }
         }.start()
     }
@@ -208,7 +211,7 @@ class Repository private constructor(
                     }
                 }
             } else {
-                callback?.onFailure(null)
+                callback?.onFailure()
             }
         } catch (t: Throwable) {
             callback?.onFailure(t.message)

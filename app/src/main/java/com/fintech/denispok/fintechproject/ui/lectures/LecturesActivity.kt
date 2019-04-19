@@ -17,7 +17,7 @@ import com.fintech.denispok.fintechproject.utilities.InjectorUtils
 
 class LecturesActivity : AppCompatActivity() {
 
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: LecturesAdapter
 
@@ -32,7 +32,7 @@ class LecturesActivity : AppCompatActivity() {
         val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
 
         swipeRefreshLayout.setOnRefreshListener {
-            lecturesViewModel.updateLectures()
+            lecturesViewModel.updateLectures(LecturesResponseCallback(this))
         }
 
         val layoutManager = LinearLayoutManager(this)
