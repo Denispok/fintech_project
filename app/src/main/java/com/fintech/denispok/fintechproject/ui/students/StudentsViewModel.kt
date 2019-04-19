@@ -10,6 +10,6 @@ class StudentsViewModel(private val repository: Repository) : ViewModel() {
     fun getStudents(callback: StudentsUpdateCallback? = null): LiveData<List<Student>> =
         repository.getStudents(callback)
 
-    fun updateStudents(callback: StudentsUpdateCallback? = null) = repository.updateStudentsCache(callback)
+    fun updateStudentsCache(callback: StudentsUpdateCallback? = null) = repository.updateStudentsCache(callback)
 
 }

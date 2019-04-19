@@ -170,12 +170,12 @@ class Repository private constructor(
         return tasksLiveData
     }
 
-    fun getUser(callback: ResponseCallback): LiveData<User> {
+    fun getUser(callback: ResponseCallback? = null): LiveData<User> {
         if (user.value == null) updateUserCache(callback)
         return user
     }
 
-    fun updateUserCache(callback: ResponseCallback) = Thread {
+    fun updateUserCache(callback: ResponseCallback? = null) = Thread {
         val userTimeout = cachePreferences.getLong(USER_TIMEOUT_KEY, Long.MIN_VALUE)
 
         if (userTimeout > System.currentTimeMillis() || user.value == null) {
@@ -187,7 +187,7 @@ class Repository private constructor(
 
     }.start()
 
-    fun updateUserFromServer(callback: ResponseCallback) {
+    fun updateUserFromServer(callback: ResponseCallback? = null) {
         try {
             val response = apiService.getUser(token).execute()
             if (response.isSuccessful) {
@@ -204,14 +204,14 @@ class Repository private constructor(
                             this@Repository.user.postValue(userDao.getUser())
                         }
                     } else {
-                        callback.onFailure(body.message)
+                        callback?.onFailure(body.message)
                     }
                 }
             } else {
-                callback.onFailure(null)
+                callback?.onFailure(null)
             }
         } catch (t: Throwable) {
-            callback.onFailure(t.message)
+            callback?.onFailure(t.message)
         }
     }
 
