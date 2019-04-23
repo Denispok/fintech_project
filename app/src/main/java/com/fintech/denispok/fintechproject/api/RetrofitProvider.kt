@@ -18,7 +18,7 @@ class RetrofitProvider private constructor() {
                             .client(OkHttpClient.Builder()
                                     .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                                     .addInterceptor {
-                                        Thread.sleep(1000)
+                                        Thread.sleep(2000)
                                         it.proceed(it.request())
                                     }
                                     .build())

@@ -1,4 +1,4 @@
-package com.fintech.denispok.fintechproject.ui
+package com.fintech.denispok.fintechproject.customviews
 
 import android.content.Context
 import android.support.v4.view.ViewPager

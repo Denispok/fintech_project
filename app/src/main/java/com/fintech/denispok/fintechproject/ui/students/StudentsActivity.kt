@@ -78,7 +78,7 @@ class StudentsActivity : AppCompatActivity() {
         })
 
         swipeRefreshLayout.setOnRefreshListener {
-            studentsViewModel.updateStudents(StudentsUpdateCallback(this))
+            studentsViewModel.updateStudentsCache(StudentsUpdateCallback(this))
         }
     }
 

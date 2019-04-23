@@ -1,54 +1,63 @@
 package com.fintech.denispok.fintechproject.ui.profile
 
-import android.content.Context
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import com.fintech.denispok.fintechproject.ui.MainActivity
+import com.bumptech.glide.Glide
 import com.fintech.denispok.fintechproject.R
-import com.fintech.denispok.fintechproject.api.ApiService
-import com.fintech.denispok.fintechproject.api.RetrofitProvider
+import com.fintech.denispok.fintechproject.utilities.InjectorUtils
 
-class ProfileFragment : Fragment(), MainActivity.IOnTabSelected {
+class ProfileFragment : Fragment() {
 
-    companion object {
-        const val LAST_NAME_KEY = "last_name"
-        const val FIRST_NAME_KEY = "first_name"
-        const val MIDDLE_NAME_KEY = "middle_name"
-    }
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var profileImageView: ImageView
+    private lateinit var firstNameView: TextView
+    private lateinit var lastNameView: TextView
+    private lateinit var middleNameView: TextView
 
-    lateinit var profileImageView: ImageView
-    lateinit var firstNameView: TextView
-    lateinit var lastNameView: TextView
-    lateinit var middleNameView: TextView
+    private lateinit var profileViewModel: ProfileViewModel
 
-    lateinit var apiService: ApiService
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    override fun onTabSelected() {
-        val preferences = context!!.getSharedPreferences("cache", Context.MODE_PRIVATE)
-        val retrofit = RetrofitProvider.getInstance()
-        apiService = retrofit.create(ApiService::class.java)
-        val userCall = apiService.getUser(preferences.getString("token", "")!!)
-        userCall.enqueue(ProfileUserCallback(this))
+        val profileViewModelFactory = InjectorUtils.provideProfileViewModelFactory(activity!!.applicationContext)
+        profileViewModel = ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
-        view.findViewById<Button>(R.id.button_edit).setOnClickListener {
-            fragmentManager!!.beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.fragment_profile_wrapper, EditFragment())
-                .commit()
-        }
+
+        swipeRefreshLayout = view.findViewById(R.id.profile_swipeRefreshLayout)
         profileImageView = view.findViewById(R.id.profile_image)
         firstNameView = view.findViewById(R.id.first_name)
         lastNameView = view.findViewById(R.id.last_name)
         middleNameView = view.findViewById(R.id.middle_name)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            profileViewModel.updateUserCache(ProfileResponseCallback(this))
+        }
+
+        profileViewModel.getUser(ProfileResponseCallback(this)).observe(this, Observer { user ->
+            swipeRefreshLayout.isRefreshing = false
+            user?.apply {
+                firstNameView.text = firstName
+                lastNameView.text = lastName
+                middleNameView.text = middleName
+                avatar?.also { avatar ->
+                    Glide.with(this@ProfileFragment)
+                            .load("https://fintech.tinkoff.ru/" + avatar.drop(1))
+                            .into(profileImageView)
+                }
+            }
+        })
+
         return view
     }
 }

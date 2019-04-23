@@ -5,25 +5,31 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
 import android.util.Log
 import com.fintech.denispok.fintechproject.api.ApiService
+import com.fintech.denispok.fintechproject.api.AuthRequestBody
 import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.api.entity.Student
 import com.fintech.denispok.fintechproject.api.entity.Task
+import com.fintech.denispok.fintechproject.api.entity.User
 import com.fintech.denispok.fintechproject.repository.dao.LectureDao
 import com.fintech.denispok.fintechproject.repository.dao.StudentDao
 import com.fintech.denispok.fintechproject.repository.dao.TaskDao
+import com.fintech.denispok.fintechproject.repository.dao.UserDao
 import com.fintech.denispok.fintechproject.ui.students.StudentsUpdateCallback
 
 class Repository private constructor(
         private val lectureDao: LectureDao,
         private val taskDao: TaskDao,
         private val studentDao: StudentDao,
+        private val userDao: UserDao,
         private val cachePreferences: SharedPreferences,
         private val apiService: ApiService
 ) {
 
     companion object {
-        const val STUDENTS_CACHE_LIFETIME = 10_000L
+        const val CACHE_LIFETIME = 10_000L
+        const val LECTURES_TIMEOUT_KEY = "lectures_timeout"
         const val STUDENTS_TIMEOUT_KEY = "students_timeout"
+        const val USER_TIMEOUT_KEY = "user_timeout"
 
         @Volatile
         private var instance: Repository? = null
@@ -32,72 +38,90 @@ class Repository private constructor(
                 lectureDao: LectureDao,
                 taskDao: TaskDao,
                 studentDao: StudentDao,
+                userDao: UserDao,
                 cachePreferences: SharedPreferences,
                 apiService: ApiService
         ) = instance ?: synchronized(this) {
-            instance ?: Repository(lectureDao, taskDao, studentDao, cachePreferences, apiService)
-                    .also { instance = it }
+            instance ?: Repository(
+                    lectureDao,
+                    taskDao,
+                    studentDao,
+                    userDao,
+                    cachePreferences,
+                    apiService
+            ).also { instance = it }
         }
     }
 
     private val lectures: MutableLiveData<List<Lecture>> = MutableLiveData()
     private val students: MutableLiveData<List<Student>> = MutableLiveData()
-    private var token: String = ""
+    private val user: MutableLiveData<User> = MutableLiveData()
+    var token: String = ""
         get() {
             if (field.isEmpty())
                 field = cachePreferences.getString("token", "") ?: ""
             return field
         }
-
-    fun getLectures(): LiveData<List<Lecture>> {
-        if (lectures.value == null) {
-            Thread {
-                val cachedLectures = lectureDao.getLectures()
-
-                if (cachedLectures.isEmpty()) {
-                    updateLectures()
-                } else {
-                    lectures.postValue(cachedLectures)
-                }
-            }.start()
+        set(value) {
+            field = value
+            cachePreferences.edit().putString("token", field).apply()
         }
+
+    fun getLectures(callback: ResponseCallback? = null): LiveData<List<Lecture>> {
+        if (lectures.value == null) updateLecturesCache(callback)
         return lectures
     }
 
-    fun updateLectures() {
-        Thread {
-            try {
-                val response = apiService.getLectures(token).execute()
+    fun updateLecturesCache(callback: ResponseCallback? = null) = Thread {
+        val lecturesTimeout = cachePreferences.getLong(LECTURES_TIMEOUT_KEY, Long.MIN_VALUE)
 
-                if (response.isSuccessful) {
-                    response.body()?.also {
-                        lectureDao.deleteAllLectures()
-                        lectureDao.insertLectures(it.lectures)
-                        lectures.postValue(lectureDao.getLectures())
+        if (lecturesTimeout > System.currentTimeMillis() || lectures.value == null) {
+            lectures.postValue(lectureDao.getLectures())
+        }
+        if (lecturesTimeout <= System.currentTimeMillis()) {
+            updateLecturesFromServer(callback)
+        }
 
-                        taskDao.deleteAllTasks()
-                        val tasks = mutableListOf<Task>()
-                        it.lectures.forEach { lecture ->
-                            lecture.tasks.forEach { task ->
-                                task.lectureId = lecture.id
-                                tasks.add(task)
-                            }
+    }.start()
+
+    fun updateLecturesFromServer(callback: ResponseCallback? = null) {
+        try {
+            val response = apiService.getLectures(token).execute()
+
+            if (response.isSuccessful) {
+                response.body()?.also {
+                    lectureDao.deleteAllLectures()
+                    lectureDao.insertLectures(it.lectures)
+                    lectures.postValue(lectureDao.getLectures())
+
+                    taskDao.deleteAllTasks()
+                    val tasks = mutableListOf<Task>()
+                    it.lectures.forEach { lecture ->
+                        lecture.tasks.forEach { task ->
+                            task.lectureId = lecture.id
+                            tasks.add(task)
                         }
-                        taskDao.insertTasks(tasks)
                     }
+                    taskDao.insertTasks(tasks)
+                    cachePreferences.edit()
+                            .putLong(LECTURES_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
+                            .apply()
                 }
-            } catch (t: Throwable) {
-                Log.d("REPO", t.message)
+            } else {
+                callback?.onFailure()
             }
-        }.start()
+        } catch (t: Throwable) {
+            Log.d("REPO", t.message)
+            callback?.onFailure(t.message)
+        }
     }
 
     fun getStudents(callback: StudentsUpdateCallback? = null): LiveData<List<Student>> {
-        updateStudents(callback)
+        updateStudentsCache(callback)
         return students
     }
 
-    fun updateStudents(callback: StudentsUpdateCallback? = null) = Thread {
+    fun updateStudentsCache(callback: StudentsUpdateCallback? = null) = Thread {
         val studentsTimeout = cachePreferences.getLong(STUDENTS_TIMEOUT_KEY, Long.MIN_VALUE)
 
         if (studentsTimeout > System.currentTimeMillis() || students.value == null) {
@@ -105,17 +129,17 @@ class Repository private constructor(
             callback?.onCacheResponse()
         }
         if (studentsTimeout <= System.currentTimeMillis()) {
-            updateStudentsNow(callback)
+            updateStudentsFromServer(callback)
         }
 
     }.start()
 
-    fun updateStudentsNow(callback: StudentsUpdateCallback? = null) {
+    fun updateStudentsFromServer(callback: StudentsUpdateCallback? = null) {
         try {
             val response = apiService.getGrades(token).execute()
-            callback?.onResponse(response)
 
             if (response.isSuccessful) {
+                callback?.onServerResponse()
 
                 response.body()?.also { body ->
                     val grades = body[1].asJsonObject.getAsJsonArray("grades")
@@ -135,13 +159,13 @@ class Repository private constructor(
                     studentDao.deleteAllStudents()
                     studentDao.insertStudents(students)
                     cachePreferences.edit()
-                            .putLong(STUDENTS_TIMEOUT_KEY, System.currentTimeMillis() + STUDENTS_CACHE_LIFETIME)
+                            .putLong(STUDENTS_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
                             .apply()
                     this@Repository.students.postValue(studentDao.getStudents())
                 }
             }
         } catch (t: Throwable) {
-            callback?.onFailure(t)
+            callback?.onFailure(t.message)
         }
     }
 
@@ -153,4 +177,50 @@ class Repository private constructor(
         return tasksLiveData
     }
 
+    fun getUser(callback: ResponseCallback? = null): LiveData<User> {
+        if (user.value == null) updateUserCache(callback)
+        return user
+    }
+
+    fun updateUserCache(callback: ResponseCallback? = null) = Thread {
+        val userTimeout = cachePreferences.getLong(USER_TIMEOUT_KEY, Long.MIN_VALUE)
+
+        if (userTimeout > System.currentTimeMillis() || user.value == null) {
+            user.postValue(userDao.getUser())
+        }
+        if (userTimeout <= System.currentTimeMillis()) {
+            updateUserFromServer(callback)
+        }
+
+    }.start()
+
+    fun updateUserFromServer(callback: ResponseCallback? = null) {
+        try {
+            val response = apiService.getUser(token).execute()
+            if (response.isSuccessful) {
+                response.body()?.also { body ->
+
+                    if (body.status == "Ok") {
+                        body.user?.also { user ->
+
+                            userDao.deleteAllUsers()
+                            userDao.insertUser(user)
+                            cachePreferences.edit()
+                                    .putLong(USER_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
+                                    .apply()
+                            this@Repository.user.postValue(userDao.getUser())
+                        }
+                    } else {
+                        callback?.onFailure(body.message)
+                    }
+                }
+            } else {
+                callback?.onFailure()
+            }
+        } catch (t: Throwable) {
+            callback?.onFailure(t.message)
+        }
+    }
+
+    fun authCall(authRequestBody: AuthRequestBody) = apiService.auth(authRequestBody)
 }

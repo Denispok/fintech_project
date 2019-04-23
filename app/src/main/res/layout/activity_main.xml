@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-    <com.fintech.denispok.fintechproject.ui.BottomNavigationViewPager
+    <com.fintech.denispok.fintechproject.customviews.BottomNavigationViewPager
         android:id="@+id/view_pager"
         android:layout_width="0dp"
         android:layout_height="0dp"

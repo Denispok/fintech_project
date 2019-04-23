@@ -5,13 +5,14 @@ import android.arch.lifecycle.ViewModel
 import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.api.entity.Task
 import com.fintech.denispok.fintechproject.repository.Repository
+import com.fintech.denispok.fintechproject.repository.ResponseCallback
 
 class LecturesViewModel(private val repository: Repository) : ViewModel() {
 
-    fun getLectures(): LiveData<List<Lecture>> = repository.getLectures()
+    fun getLectures(callback: ResponseCallback? = null): LiveData<List<Lecture>> = repository.getLectures(callback)
 
     fun getTasks(lectureId: Int): LiveData<List<Task>> = repository.getTasks(lectureId)
 
-    fun updateLectures() = repository.updateLectures()
+    fun updateLecturesCache(callback: ResponseCallback? = null) = repository.updateLecturesCache(callback)
 
 }
