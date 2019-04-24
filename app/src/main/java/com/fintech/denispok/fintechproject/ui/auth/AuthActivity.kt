@@ -7,16 +7,18 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.ui.MainActivity
-import com.fintech.denispok.fintechproject.utilities.InjectorUtils
 import kotlinx.android.synthetic.main.activity_auth.*
+import javax.inject.Inject
 
 class AuthActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var authViewModelFactory: AuthViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
-        val authViewModelFactory = InjectorUtils.provideAuthViewModelFactory(applicationContext)
         val authViewModel = ViewModelProvider(this, authViewModelFactory).get(AuthViewModel::class.java)
 
         authViewModel.getState().observe(this, Observer {

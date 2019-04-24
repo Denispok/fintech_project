@@ -1,7 +1,5 @@
 package com.fintech.denispok.fintechproject.ui.students
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -11,7 +9,6 @@ import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import com.fintech.denispok.fintechproject.R
-import com.fintech.denispok.fintechproject.utilities.InjectorUtils
 
 class StudentsActivity : AppCompatActivity() {
 
@@ -63,23 +60,23 @@ class StudentsActivity : AppCompatActivity() {
         swipeRefreshLayout = findViewById(R.id.activity_students)
         recyclerView = findViewById(R.id.students_recycler_view)
 
-        val studentsViewModelFactory = InjectorUtils.provideStudentsViewModelFactory(applicationContext)
-        val studentsViewModel = ViewModelProvider(this, studentsViewModelFactory).get(StudentsViewModel::class.java)
+        //val studentsViewModelFactory = InjectorUtilsModule.provideStudentsViewModelFactory(applicationContext)
+        //val studentsViewModel = ViewModelProvider(this, studentsViewModelFactory).get(StudentsViewModel::class.java)
 
         recyclerLayoutManager = GridLayoutManager(this, 1)
         recyclerAdapter = StudentsAdapter(listOf())
         recyclerView.layoutManager = recyclerLayoutManager
         recyclerView.adapter = recyclerAdapter
 
-        studentsViewModel.getStudents(StudentsUpdateCallback(this)).observe(this, Observer {
-            if (it != null) {
-                recyclerAdapter.students = it
-            }
-        })
-
-        swipeRefreshLayout.setOnRefreshListener {
-            studentsViewModel.updateStudentsCache(StudentsUpdateCallback(this))
-        }
+//        studentsViewModel.getStudents(StudentsUpdateCallback(this)).observe(this, Observer {
+//            if (it != null) {
+//                recyclerAdapter.students = it
+//            }
+//        })
+//
+//        swipeRefreshLayout.setOnRefreshListener {
+//            studentsViewModel.updateStudentsCache(StudentsUpdateCallback(this))
+//        }
     }
 
     private fun changeView() {

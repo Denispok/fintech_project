@@ -13,13 +13,16 @@ import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity
 import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity.Companion.EXTRA_LECTURE_KEY
-import com.fintech.denispok.fintechproject.utilities.InjectorUtils
+import javax.inject.Inject
 
 class LecturesActivity : AppCompatActivity() {
 
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: LecturesAdapter
+
+    @Inject
+    lateinit var lecturesViewModelFactory:LecturesViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +31,6 @@ class LecturesActivity : AppCompatActivity() {
         swipeRefreshLayout = findViewById(R.id.lectures_swipeRefreshLayout)
         recyclerView = findViewById(R.id.lectures_recyclerView)
 
-        val lecturesViewModelFactory = InjectorUtils.provideLecturesViewModelFactory(applicationContext)
         val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
 
         swipeRefreshLayout.setOnRefreshListener {

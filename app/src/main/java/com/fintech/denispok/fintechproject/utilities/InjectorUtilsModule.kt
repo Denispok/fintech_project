@@ -9,10 +9,14 @@ import com.fintech.denispok.fintechproject.ui.auth.AuthViewModelFactory
 import com.fintech.denispok.fintechproject.ui.lectures.LecturesViewModelFactory
 import com.fintech.denispok.fintechproject.ui.profile.ProfileViewModelFactory
 import com.fintech.denispok.fintechproject.ui.students.StudentsViewModelFactory
+import dagger.Module
+import dagger.Provides
 
-object InjectorUtils {
+@Module
+class InjectorUtilsModule(private val applicationContext: Context) {
 
-    fun provideRepository(applicationContext: Context): Repository {
+    @Provides
+    fun provideRepository(): Repository {
         val database = DatabaseProvider.database
         val cachePreferences = applicationContext.getSharedPreferences("cache", Context.MODE_PRIVATE)
         val retrofit = RetrofitProvider.getInstance()
@@ -27,15 +31,19 @@ object InjectorUtils {
         )
     }
 
-    fun provideLecturesViewModelFactory(applicationContext: Context): LecturesViewModelFactory =
-            LecturesViewModelFactory(provideRepository(applicationContext))
+    @Provides
+    fun provideLecturesViewModelFactory(): LecturesViewModelFactory =
+            LecturesViewModelFactory(provideRepository())
 
-    fun provideStudentsViewModelFactory(applicationContext: Context): StudentsViewModelFactory =
-            StudentsViewModelFactory(provideRepository(applicationContext))
+    @Provides
+    fun provideStudentsViewModelFactory(): StudentsViewModelFactory =
+            StudentsViewModelFactory(provideRepository())
 
-    fun provideAuthViewModelFactory(applicationContext: Context): AuthViewModelFactory =
-            AuthViewModelFactory(provideRepository(applicationContext))
+    @Provides
+    fun provideAuthViewModelFactory(): AuthViewModelFactory =
+            AuthViewModelFactory(provideRepository())
 
-    fun provideProfileViewModelFactory(applicationContext: Context): ProfileViewModelFactory =
-            ProfileViewModelFactory(provideRepository(applicationContext))
+    @Provides
+    fun provideProfileViewModelFactory(): ProfileViewModelFactory =
+            ProfileViewModelFactory(provideRepository())
 }
