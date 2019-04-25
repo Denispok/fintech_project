@@ -1,11 +1,17 @@
 package com.fintech.denispok.fintechproject.ui.lectures.tasks
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
+import com.fintech.denispok.fintechproject.ui.lectures.LecturesViewModel
+import com.fintech.denispok.fintechproject.ui.lectures.LecturesViewModelFactory
+import javax.inject.Inject
 
 class TaskActivity : AppCompatActivity() {
 
@@ -16,9 +22,15 @@ class TaskActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: TaskAdapter
 
+    @Inject
+    lateinit var lecturesViewModelFactory: LecturesViewModelFactory
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
+
+        App.instance.applicationComponent.inject(this)
+        val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
 
         val layoutManager = LinearLayoutManager(this)
         recyclerAdapter = TaskAdapter(listOf())
@@ -28,13 +40,12 @@ class TaskActivity : AppCompatActivity() {
         recyclerView.addItemDecoration(DividerItemDecoration(this, layoutManager.orientation))
 
         val lectureId = intent.getIntExtra(EXTRA_LECTURE_KEY, 0)
-//        val lecturesViewModelFactory = InjectorUtilsModule.provideLecturesViewModelFactory(applicationContext)
-//        val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
-//        lecturesViewModel.getTasks(lectureId).observe(this, Observer {
-//            if (it != null) {
-//                recyclerAdapter.tasks = it
-//                recyclerAdapter.notifyDataSetChanged()
-//            }
-//        })
+
+        lecturesViewModel.getTasks(lectureId).observe(this, Observer {
+            if (it != null) {
+                recyclerAdapter.tasks = it
+                recyclerAdapter.notifyDataSetChanged()
+            }
+        })
     }
 }

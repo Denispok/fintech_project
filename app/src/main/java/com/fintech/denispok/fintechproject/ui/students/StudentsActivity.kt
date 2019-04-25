@@ -1,5 +1,7 @@
 package com.fintech.denispok.fintechproject.ui.students
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
@@ -8,7 +10,9 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
+import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
+import javax.inject.Inject
 
 class StudentsActivity : AppCompatActivity() {
 
@@ -16,6 +20,9 @@ class StudentsActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerLayoutManager: GridLayoutManager
     private lateinit var recyclerAdapter: StudentsAdapter
+
+    @Inject
+    lateinit var studentsViewModelFactory: StudentsViewModelFactory
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.students_action_bar, menu)
@@ -57,26 +64,27 @@ class StudentsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_students)
         supportActionBar?.title = "Успеваемость"
 
+        App.instance.applicationComponent.inject(this)
+
+        val studentsViewModel = ViewModelProvider(this, studentsViewModelFactory).get(StudentsViewModel::class.java)
+
         swipeRefreshLayout = findViewById(R.id.activity_students)
         recyclerView = findViewById(R.id.students_recycler_view)
-
-        //val studentsViewModelFactory = InjectorUtilsModule.provideStudentsViewModelFactory(applicationContext)
-        //val studentsViewModel = ViewModelProvider(this, studentsViewModelFactory).get(StudentsViewModel::class.java)
 
         recyclerLayoutManager = GridLayoutManager(this, 1)
         recyclerAdapter = StudentsAdapter(listOf())
         recyclerView.layoutManager = recyclerLayoutManager
         recyclerView.adapter = recyclerAdapter
 
-//        studentsViewModel.getStudents(StudentsUpdateCallback(this)).observe(this, Observer {
-//            if (it != null) {
-//                recyclerAdapter.students = it
-//            }
-//        })
-//
-//        swipeRefreshLayout.setOnRefreshListener {
-//            studentsViewModel.updateStudentsCache(StudentsUpdateCallback(this))
-//        }
+        studentsViewModel.getStudents(StudentsUpdateCallback(this)).observe(this, Observer {
+            if (it != null) {
+                recyclerAdapter.students = it
+            }
+        })
+
+        swipeRefreshLayout.setOnRefreshListener {
+            studentsViewModel.updateStudentsCache(StudentsUpdateCallback(this))
+        }
     }
 
     private fun changeView() {

@@ -1,13 +1,13 @@
 package com.fintech.denispok.fintechproject
 
 import android.app.Application
-import com.fintech.denispok.fintechproject.utilities.DaggerInjectorComponent
-import com.fintech.denispok.fintechproject.utilities.InjectorComponent
-import com.fintech.denispok.fintechproject.utilities.InjectorUtilsModule
+import com.fintech.denispok.fintechproject.di.ApplicationComponent
+import com.fintech.denispok.fintechproject.di.DaggerApplicationComponent
+import com.fintech.denispok.fintechproject.di.RepositoryModule
 
 class App : Application() {
 
-    lateinit var component: InjectorComponent
+    lateinit var applicationComponent: ApplicationComponent
 
     companion object {
         lateinit var instance: App
@@ -18,12 +18,8 @@ class App : Application() {
         super.onCreate()
 
         instance = this
-        setup()
-    }
-
-    private fun setup() {
-        component = DaggerInjectorComponent.builder()
-            .injectorUtilsModule(InjectorUtilsModule(applicationContext)).build()
-        component.inject(this)
+        applicationComponent = DaggerApplicationComponent.builder()
+            .repositoryModule(RepositoryModule(applicationContext))
+            .build()
     }
 }

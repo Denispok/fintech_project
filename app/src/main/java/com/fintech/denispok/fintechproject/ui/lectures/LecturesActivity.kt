@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity
@@ -28,10 +29,12 @@ class LecturesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lectures)
 
-        swipeRefreshLayout = findViewById(R.id.lectures_swipeRefreshLayout)
-        recyclerView = findViewById(R.id.lectures_recyclerView)
+        App.instance.applicationComponent.inject(this)
 
         val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
+
+        swipeRefreshLayout = findViewById(R.id.lectures_swipeRefreshLayout)
+        recyclerView = findViewById(R.id.lectures_recyclerView)
 
         swipeRefreshLayout.setOnRefreshListener {
             lecturesViewModel.updateLecturesCache(LecturesResponseCallback(this))
