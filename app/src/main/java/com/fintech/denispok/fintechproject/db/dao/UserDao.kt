@@ -1,4 +1,4 @@
-package com.fintech.denispok.fintechproject.repository.dao
+package com.fintech.denispok.fintechproject.db.dao
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert

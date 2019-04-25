@@ -3,7 +3,7 @@ package com.fintech.denispok.fintechproject
 import android.app.Application
 import com.fintech.denispok.fintechproject.di.ApplicationComponent
 import com.fintech.denispok.fintechproject.di.DaggerApplicationComponent
-import com.fintech.denispok.fintechproject.di.RepositoryModule
+import com.fintech.denispok.fintechproject.repository.RepositoryModule
 
 class App : Application() {
 
