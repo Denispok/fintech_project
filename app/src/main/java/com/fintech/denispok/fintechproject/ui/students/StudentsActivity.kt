@@ -1,6 +1,5 @@
 package com.fintech.denispok.fintechproject.ui.students
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
@@ -76,14 +75,13 @@ class StudentsActivity : AppCompatActivity() {
         recyclerView.layoutManager = recyclerLayoutManager
         recyclerView.adapter = recyclerAdapter
 
-        studentsViewModel.getStudents(StudentsUpdateCallback(this)).observe(this, Observer {
-            if (it != null) {
-                recyclerAdapter.students = it
-            }
-        })
+        studentsViewModel.getStudents().subscribe {
+            recyclerAdapter.students = it
+        }
+
 
         swipeRefreshLayout.setOnRefreshListener {
-            studentsViewModel.updateStudentsCache(StudentsUpdateCallback(this))
+            studentsViewModel.updateStudentsCache()
         }
     }
 
