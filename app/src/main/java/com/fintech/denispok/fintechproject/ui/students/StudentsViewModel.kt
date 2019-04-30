@@ -12,6 +12,7 @@ class StudentsViewModel(private val repository: Repository) : ViewModel() {
     fun getStudents(): Observable<List<Student>> {
         val observable = repository.getStudents()
         return observable.subscribeOn(Schedulers.io())
+            .map { it.filter { student -> student.mark > 20 } }
             .observeOn(AndroidSchedulers.mainThread())
     }
 
