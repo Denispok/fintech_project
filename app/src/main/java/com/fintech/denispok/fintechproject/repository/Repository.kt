@@ -94,19 +94,22 @@ class Repository(
         }
     }
 
-    fun getStudents():Observable<List<Student>> {
-        return updateStudentsCache()
-    }
+    fun getStudents() = Observable.create<List<Student>> { emitter ->
 
-    fun updateStudentsCache() = Observable.create<List<Student>> {emmiter ->
+        emitter.onNext(studentDao.getStudents())
+
         val studentsTimeout = cachePreferences.getLong(STUDENTS_TIMEOUT_KEY, Long.MIN_VALUE)
 
-        emmiter.onNext(studentDao.getStudents())
-
         if (studentsTimeout <= System.currentTimeMillis()) {
-            updateStudentsFromServer().subscribe {
-                emmiter.onNext(it)
-            }
+            updateStudentsFromServer().subscribe({
+                emitter.onNext(it)
+            }, {
+                emitter.onError(it)
+            }, {
+                emitter.onComplete()
+            })
+        } else {
+            emitter.onComplete()
         }
     }
 
@@ -137,7 +140,10 @@ class Repository(
                         .putLong(STUDENTS_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
                         .apply()
                     it.onNext(studentDao.getStudents())
+                    it.onComplete()
                 }
+            } else {
+                it.onError(Throwable("Connection error"))
             }
         } catch (t: Throwable) {
             it.onError(t)

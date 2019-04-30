@@ -79,9 +79,14 @@ class StudentsActivity : AppCompatActivity() {
             recyclerAdapter.students = it
         }
 
-
         swipeRefreshLayout.setOnRefreshListener {
-            studentsViewModel.updateStudentsCache()
+            studentsViewModel.getStudents().subscribe({
+                recyclerAdapter.students = it
+            }, {
+                swipeRefreshLayout.isRefreshing = false
+            }, {
+                swipeRefreshLayout.isRefreshing = false
+            })
         }
     }
 

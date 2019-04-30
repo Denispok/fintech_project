@@ -15,6 +15,4 @@ class StudentsViewModel(private val repository: Repository) : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun updateStudentsCache() = repository.updateStudentsCache()
-
 }
