@@ -1,6 +1,5 @@
 package com.fintech.denispok.fintechproject.ui.students
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
@@ -10,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
 import javax.inject.Inject
@@ -76,14 +76,21 @@ class StudentsActivity : AppCompatActivity() {
         recyclerView.layoutManager = recyclerLayoutManager
         recyclerView.adapter = recyclerAdapter
 
-        studentsViewModel.getStudents(StudentsUpdateCallback(this)).observe(this, Observer {
-            if (it != null) {
-                recyclerAdapter.students = it
-            }
+        studentsViewModel.getStudents().subscribe({
+            recyclerAdapter.students = it
+        }, {
+            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
         })
 
         swipeRefreshLayout.setOnRefreshListener {
-            studentsViewModel.updateStudentsCache(StudentsUpdateCallback(this))
+            studentsViewModel.getStudents().subscribe({
+                recyclerAdapter.students = it
+            }, {
+                swipeRefreshLayout.isRefreshing = false
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+            }, {
+                swipeRefreshLayout.isRefreshing = false
+            })
         }
     }
 

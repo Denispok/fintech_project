@@ -14,7 +14,8 @@ import com.fintech.denispok.fintechproject.db.dao.LectureDao
 import com.fintech.denispok.fintechproject.db.dao.StudentDao
 import com.fintech.denispok.fintechproject.db.dao.TaskDao
 import com.fintech.denispok.fintechproject.db.dao.UserDao
-import com.fintech.denispok.fintechproject.ui.students.StudentsUpdateCallback
+import io.reactivex.Observable
+import io.reactivex.Single
 
 class Repository(
     private val lectureDao: LectureDao,
@@ -33,7 +34,6 @@ class Repository(
     }
 
     private val lectures: MutableLiveData<List<Lecture>> = MutableLiveData()
-    private val students: MutableLiveData<List<Student>> = MutableLiveData()
     private val user: MutableLiveData<User> = MutableLiveData()
     var token: String = ""
         get() {
@@ -95,56 +95,54 @@ class Repository(
         }
     }
 
-    fun getStudents(callback: StudentsUpdateCallback? = null): LiveData<List<Student>> {
-        updateStudentsCache(callback)
-        return students
-    }
+    fun getStudents() = Observable.create<List<Student>> { emitter ->
 
-    fun updateStudentsCache(callback: StudentsUpdateCallback? = null) = Thread {
+        emitter.onNext(studentDao.getStudents())
+
         val studentsTimeout = cachePreferences.getLong(STUDENTS_TIMEOUT_KEY, Long.MIN_VALUE)
 
-        if (studentsTimeout > System.currentTimeMillis() || students.value == null) {
-            students.postValue(studentDao.getStudents())
-            callback?.onCacheResponse()
-        }
         if (studentsTimeout <= System.currentTimeMillis()) {
-            updateStudentsFromServer(callback)
+            updateStudentsFromServer().subscribe({
+                emitter.onNext(it)
+                emitter.onComplete()
+            }, {
+                emitter.onError(it)
+            })
+        } else {
+            emitter.onComplete()
         }
+    }
 
-    }.start()
+    fun updateStudentsFromServer() = Single.fromCallable<List<Student>> {
 
-    fun updateStudentsFromServer(callback: StudentsUpdateCallback? = null) {
-        try {
-            val response = apiService.getGrades(token).execute()
+        val response = apiService.getGrades(token).execute()
 
-            if (response.isSuccessful) {
-                callback?.onServerResponse()
+        if (response.isSuccessful) {
 
-                response.body()?.also { body ->
-                    val grades = body[1].asJsonObject.getAsJsonArray("grades")
-                    val students = mutableListOf<Student>()
+            val body = response.body()!!
+            val grades = body[1].asJsonObject.getAsJsonArray("grades")
+            val students = mutableListOf<Student>()
 
-                    grades.forEach {
-                        val jsonStudent = it.asJsonObject
-                        students.add(
-                                Student(
-                                        jsonStudent["student_id"].asLong,
-                                        jsonStudent["student"].asString,
-                                        jsonStudent["grades"].asJsonArray.last().asJsonObject["mark"].asDouble
-                                )
-                        )
-                    }
-
-                    studentDao.deleteAllStudents()
-                    studentDao.insertStudents(students)
-                    cachePreferences.edit()
-                            .putLong(STUDENTS_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
-                            .apply()
-                    this@Repository.students.postValue(studentDao.getStudents())
-                }
+            grades.forEach {
+                val jsonStudent = it.asJsonObject
+                students.add(
+                    Student(
+                        jsonStudent["student_id"].asLong,
+                        jsonStudent["student"].asString,
+                        jsonStudent["grades"].asJsonArray.last().asJsonObject["mark"].asDouble
+                    )
+                )
             }
-        } catch (t: Throwable) {
-            callback?.onFailure(t.message)
+
+            studentDao.deleteAllStudents()
+            studentDao.insertStudents(students)
+            cachePreferences.edit()
+                .putLong(STUDENTS_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
+                .apply()
+
+            return@fromCallable studentDao.getStudents()
+        } else {
+            throw (Throwable("Connection error"))
         }
     }
 
