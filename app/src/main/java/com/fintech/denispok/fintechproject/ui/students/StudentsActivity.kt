@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
 import javax.inject.Inject
@@ -75,15 +76,18 @@ class StudentsActivity : AppCompatActivity() {
         recyclerView.layoutManager = recyclerLayoutManager
         recyclerView.adapter = recyclerAdapter
 
-        studentsViewModel.getStudents().subscribe {
+        studentsViewModel.getStudents().subscribe({
             recyclerAdapter.students = it
-        }
+        }, {
+            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+        })
 
         swipeRefreshLayout.setOnRefreshListener {
             studentsViewModel.getStudents().subscribe({
                 recyclerAdapter.students = it
             }, {
                 swipeRefreshLayout.isRefreshing = false
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
             }, {
                 swipeRefreshLayout.isRefreshing = false
             })

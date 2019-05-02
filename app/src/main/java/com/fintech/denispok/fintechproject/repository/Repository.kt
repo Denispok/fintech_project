@@ -15,6 +15,7 @@ import com.fintech.denispok.fintechproject.db.dao.StudentDao
 import com.fintech.denispok.fintechproject.db.dao.TaskDao
 import com.fintech.denispok.fintechproject.db.dao.UserDao
 import io.reactivex.Observable
+import io.reactivex.Single
 
 class Repository(
     private val lectureDao: LectureDao,
@@ -103,50 +104,45 @@ class Repository(
         if (studentsTimeout <= System.currentTimeMillis()) {
             updateStudentsFromServer().subscribe({
                 emitter.onNext(it)
+                emitter.onComplete()
             }, {
                 emitter.onError(it)
-            }, {
-                emitter.onComplete()
             })
         } else {
             emitter.onComplete()
         }
     }
 
-    fun updateStudentsFromServer() = Observable.create<List<Student>> {
-        try {
-            val response = apiService.getGrades(token).execute()
+    fun updateStudentsFromServer() = Single.fromCallable<List<Student>> {
 
-            if (response.isSuccessful) {
+        val response = apiService.getGrades(token).execute()
 
-                response.body()?.also { body ->
-                    val grades = body[1].asJsonObject.getAsJsonArray("grades")
-                    val students = mutableListOf<Student>()
+        if (response.isSuccessful) {
 
-                    grades.forEach {
-                        val jsonStudent = it.asJsonObject
-                        students.add(
-                            Student(
-                                jsonStudent["student_id"].asLong,
-                                jsonStudent["student"].asString,
-                                jsonStudent["grades"].asJsonArray.last().asJsonObject["mark"].asDouble
-                            )
-                        )
-                    }
+            val body = response.body()!!
+            val grades = body[1].asJsonObject.getAsJsonArray("grades")
+            val students = mutableListOf<Student>()
 
-                    studentDao.deleteAllStudents()
-                    studentDao.insertStudents(students)
-                    cachePreferences.edit()
-                        .putLong(STUDENTS_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
-                        .apply()
-                    it.onNext(studentDao.getStudents())
-                    it.onComplete()
-                }
-            } else {
-                it.onError(Throwable("Connection error"))
+            grades.forEach {
+                val jsonStudent = it.asJsonObject
+                students.add(
+                    Student(
+                        jsonStudent["student_id"].asLong,
+                        jsonStudent["student"].asString,
+                        jsonStudent["grades"].asJsonArray.last().asJsonObject["mark"].asDouble
+                    )
+                )
             }
-        } catch (t: Throwable) {
-            it.onError(t)
+
+            studentDao.deleteAllStudents()
+            studentDao.insertStudents(students)
+            cachePreferences.edit()
+                .putLong(STUDENTS_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
+                .apply()
+
+            return@fromCallable studentDao.getStudents()
+        } else {
+            throw (Throwable("Connection error"))
         }
     }
 
