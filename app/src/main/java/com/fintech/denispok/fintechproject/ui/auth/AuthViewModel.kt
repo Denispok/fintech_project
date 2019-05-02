@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
+import com.fintech.denispok.fintechproject.App
+import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.api.AuthRequestBody
 import com.fintech.denispok.fintechproject.api.entity.User
 import com.fintech.denispok.fintechproject.repository.Repository
@@ -26,11 +28,21 @@ class AuthViewModel(private val repository: Repository) : ViewModel() {
 
     init {
         stateMutableLiveData.value =
-                if (repository.token.isEmpty()) State.DEFAULT
-                else State.SUCCESS
+            if (repository.token.isEmpty()) State.DEFAULT
+            else State.SUCCESS
     }
 
     fun auth(email: String, password: String, callback: AuthCallback) {
+
+        if (!email.matches(Regex("""^\S+@\S+\.\S+$"""))) {
+            callback.onFailure(App.applicationContext.getString(R.string.wrong_email))
+            return
+        }
+        if (password.isEmpty()) {
+            callback.onFailure(App.applicationContext.getString(R.string.wrong_password))
+            return
+        }
+
         stateMutableLiveData.postValue(State.CONNECTING)
 
         repository.authCall(AuthRequestBody(email, password)).enqueue(object : Callback<User> {

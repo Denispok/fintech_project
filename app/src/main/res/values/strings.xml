@@ -17,10 +17,13 @@
     <string name="confirm_dialog_leave">Уйти</string>
     <string name="invalid_profile">Пожалуйста проверьте правильность введенных данных</string>
 
-    <string name="login">ЛОГИН</string>
+    <!-- Auth Page -->
+    <string name="email">E-MAIL</string>
     <string name="password">ПАРОЛЬ</string>
     <string name="restore_password">Восстановить пароль</string>
     <string name="enter">Войти</string>
+    <string name="wrong_email">Проверьте правильность почты</string>
+    <string name="wrong_password">Проверьте правильность пароля</string>
 
     <plurals name="plurals_points">
         <item quantity="one">%.2f балл</item>
