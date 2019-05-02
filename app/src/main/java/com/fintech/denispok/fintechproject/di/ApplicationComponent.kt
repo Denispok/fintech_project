@@ -4,6 +4,7 @@ import com.fintech.denispok.fintechproject.api.RetrofitModule
 import com.fintech.denispok.fintechproject.db.DatabaseModule
 import com.fintech.denispok.fintechproject.repository.RepositoryModule
 import com.fintech.denispok.fintechproject.ui.auth.AuthActivity
+import com.fintech.denispok.fintechproject.ui.events.EventsFragment
 import com.fintech.denispok.fintechproject.ui.lectures.LecturesActivity
 import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity
 import com.fintech.denispok.fintechproject.ui.profile.ProfileFragment
@@ -20,5 +21,6 @@ interface ApplicationComponent {
     fun inject(activity: LecturesActivity)
     fun inject(activity: TaskActivity)
     fun inject(fragment: ProfileFragment)
+    fun inject(fragment: EventsFragment)
 
 }

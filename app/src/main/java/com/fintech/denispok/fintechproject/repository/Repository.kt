@@ -6,14 +6,9 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.fintech.denispok.fintechproject.api.ApiService
 import com.fintech.denispok.fintechproject.api.AuthRequestBody
-import com.fintech.denispok.fintechproject.api.entity.Lecture
-import com.fintech.denispok.fintechproject.api.entity.Student
-import com.fintech.denispok.fintechproject.api.entity.Task
-import com.fintech.denispok.fintechproject.api.entity.User
-import com.fintech.denispok.fintechproject.db.dao.LectureDao
-import com.fintech.denispok.fintechproject.db.dao.StudentDao
-import com.fintech.denispok.fintechproject.db.dao.TaskDao
-import com.fintech.denispok.fintechproject.db.dao.UserDao
+import com.fintech.denispok.fintechproject.api.entity.*
+import com.fintech.denispok.fintechproject.db.dao.*
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -22,6 +17,7 @@ class Repository(
     private val taskDao: TaskDao,
     private val studentDao: StudentDao,
     private val userDao: UserDao,
+    private val eventDao: EventDao,
     private val cachePreferences: SharedPreferences,
     private val apiService: ApiService
 ) {
@@ -31,6 +27,7 @@ class Repository(
         const val LECTURES_TIMEOUT_KEY = "lectures_timeout"
         const val STUDENTS_TIMEOUT_KEY = "students_timeout"
         const val USER_TIMEOUT_KEY = "user_timeout"
+        const val EVENTS_TIMEOUT_KEY = "events_timeout"
     }
 
     private val lectures: MutableLiveData<List<Lecture>> = MutableLiveData()
@@ -96,7 +93,6 @@ class Repository(
     }
 
     fun getStudents() = Observable.create<List<Student>> { emitter ->
-
         emitter.onNext(studentDao.getStudents())
 
         val studentsTimeout = cachePreferences.getLong(STUDENTS_TIMEOUT_KEY, Long.MIN_VALUE)
@@ -114,7 +110,6 @@ class Repository(
     }
 
     fun updateStudentsFromServer() = Single.fromCallable<List<Student>> {
-
         val response = apiService.getGrades(token).execute()
 
         if (response.isSuccessful) {
@@ -196,6 +191,45 @@ class Repository(
             }
         } catch (t: Throwable) {
             callback?.onFailure(t.message)
+        }
+    }
+
+    fun getActiveEvents() = Observable.create<List<Event>> { emitter ->
+        emitter.onNext(eventDao.getActiveEvents())
+
+        val eventsTimeout = cachePreferences.getLong(STUDENTS_TIMEOUT_KEY, Long.MIN_VALUE)
+
+        if (eventsTimeout <= System.currentTimeMillis()) {
+            updateEventsFromServer().subscribe({
+                emitter.onNext(eventDao.getActiveEvents())
+            }, {
+                emitter.onError(it)
+            })
+        } else {
+            emitter.onComplete()
+        }
+    }
+
+    fun updateEventsFromServer() = Completable.fromCallable {
+        val response = apiService.getEvents(token).execute()
+
+        if (response.isSuccessful) {
+            val body = response.body()!!
+            eventDao.deleteAllEvents()
+            var id = 0
+            eventDao.insertEvents(body.active.onEach {
+                it.isPassed = false
+                it.id = id++
+            })
+            eventDao.insertEvents(body.archive.onEach {
+                it.isPassed = true
+                it.id = id++
+            })
+            cachePreferences.edit()
+                .putLong(EVENTS_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
+                .apply()
+        } else {
+            throw Throwable("Connection error")
         }
     }
 

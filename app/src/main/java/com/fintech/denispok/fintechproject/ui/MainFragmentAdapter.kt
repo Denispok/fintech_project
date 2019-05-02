@@ -8,6 +8,7 @@ import com.fintech.denispok.fintechproject.ui.MainActivity.Companion.COURSES_TAB
 import com.fintech.denispok.fintechproject.ui.MainActivity.Companion.EVENTS_TAB
 import com.fintech.denispok.fintechproject.ui.MainActivity.Companion.PROFILE_TAB
 import com.fintech.denispok.fintechproject.ui.courses.CoursesFragment
+import com.fintech.denispok.fintechproject.ui.events.EventsFragment
 import com.fintech.denispok.fintechproject.ui.profile.ProfileWrapperFragment
 
 class MainFragmentAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
