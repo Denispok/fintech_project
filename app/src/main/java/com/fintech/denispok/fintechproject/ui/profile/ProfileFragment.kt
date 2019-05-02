@@ -30,7 +30,7 @@ class ProfileFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        App.instance.applicationComponent.inject(this)
+        App.applicationComponent.inject(this)
         profileViewModel = ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
     }
 

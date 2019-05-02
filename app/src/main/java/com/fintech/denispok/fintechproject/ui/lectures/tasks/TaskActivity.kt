@@ -29,7 +29,7 @@ class TaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
 
-        App.instance.applicationComponent.inject(this)
+        App.applicationComponent.inject(this)
         val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
 
         val layoutManager = LinearLayoutManager(this)

@@ -64,7 +64,7 @@ class StudentsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_students)
         supportActionBar?.title = "Успеваемость"
 
-        App.instance.applicationComponent.inject(this)
+        App.applicationComponent.inject(this)
 
         val studentsViewModel = ViewModelProvider(this, studentsViewModelFactory).get(StudentsViewModel::class.java)
 

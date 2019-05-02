@@ -20,7 +20,7 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
-        App.instance.applicationComponent.inject(this)
+        App.applicationComponent.inject(this)
 
         val authViewModel = ViewModelProvider(this, authViewModelFactory).get(AuthViewModel::class.java)
 
