@@ -9,11 +9,12 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity
 import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity.Companion.EXTRA_LECTURE_KEY
-import com.fintech.denispok.fintechproject.utilities.InjectorUtils
+import javax.inject.Inject
 
 class LecturesActivity : AppCompatActivity() {
 
@@ -21,15 +22,19 @@ class LecturesActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: LecturesAdapter
 
+    @Inject
+    lateinit var lecturesViewModelFactory:LecturesViewModelFactory
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lectures)
 
+        App.applicationComponent.inject(this)
+
+        val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
+
         swipeRefreshLayout = findViewById(R.id.lectures_swipeRefreshLayout)
         recyclerView = findViewById(R.id.lectures_recyclerView)
-
-        val lecturesViewModelFactory = InjectorUtils.provideLecturesViewModelFactory(applicationContext)
-        val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
 
         swipeRefreshLayout.setOnRefreshListener {
             lecturesViewModel.updateLecturesCache(LecturesResponseCallback(this))

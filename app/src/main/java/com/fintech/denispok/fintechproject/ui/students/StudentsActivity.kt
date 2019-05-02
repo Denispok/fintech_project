@@ -10,8 +10,9 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
+import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
-import com.fintech.denispok.fintechproject.utilities.InjectorUtils
+import javax.inject.Inject
 
 class StudentsActivity : AppCompatActivity() {
 
@@ -19,6 +20,9 @@ class StudentsActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerLayoutManager: GridLayoutManager
     private lateinit var recyclerAdapter: StudentsAdapter
+
+    @Inject
+    lateinit var studentsViewModelFactory: StudentsViewModelFactory
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.students_action_bar, menu)
@@ -60,11 +64,12 @@ class StudentsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_students)
         supportActionBar?.title = "Успеваемость"
 
+        App.applicationComponent.inject(this)
+
+        val studentsViewModel = ViewModelProvider(this, studentsViewModelFactory).get(StudentsViewModel::class.java)
+
         swipeRefreshLayout = findViewById(R.id.activity_students)
         recyclerView = findViewById(R.id.students_recycler_view)
-
-        val studentsViewModelFactory = InjectorUtils.provideStudentsViewModelFactory(applicationContext)
-        val studentsViewModel = ViewModelProvider(this, studentsViewModelFactory).get(StudentsViewModel::class.java)
 
         recyclerLayoutManager = GridLayoutManager(this, 1)
         recyclerAdapter = StudentsAdapter(listOf())

@@ -11,8 +11,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
-import com.fintech.denispok.fintechproject.utilities.InjectorUtils
+import javax.inject.Inject
 
 class ProfileFragment : Fragment() {
 
@@ -22,12 +23,14 @@ class ProfileFragment : Fragment() {
     private lateinit var lastNameView: TextView
     private lateinit var middleNameView: TextView
 
+    @Inject
+    lateinit var profileViewModelFactory: ProfileViewModelFactory
     private lateinit var profileViewModel: ProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val profileViewModelFactory = InjectorUtils.provideProfileViewModelFactory(activity!!.applicationContext)
+        App.applicationComponent.inject(this)
         profileViewModel = ViewModelProvider(this, profileViewModelFactory).get(ProfileViewModel::class.java)
     }
 

@@ -10,19 +10,19 @@ import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.api.entity.Student
 import com.fintech.denispok.fintechproject.api.entity.Task
 import com.fintech.denispok.fintechproject.api.entity.User
-import com.fintech.denispok.fintechproject.repository.dao.LectureDao
-import com.fintech.denispok.fintechproject.repository.dao.StudentDao
-import com.fintech.denispok.fintechproject.repository.dao.TaskDao
-import com.fintech.denispok.fintechproject.repository.dao.UserDao
+import com.fintech.denispok.fintechproject.db.dao.LectureDao
+import com.fintech.denispok.fintechproject.db.dao.StudentDao
+import com.fintech.denispok.fintechproject.db.dao.TaskDao
+import com.fintech.denispok.fintechproject.db.dao.UserDao
 import com.fintech.denispok.fintechproject.ui.students.StudentsUpdateCallback
 
-class Repository private constructor(
-        private val lectureDao: LectureDao,
-        private val taskDao: TaskDao,
-        private val studentDao: StudentDao,
-        private val userDao: UserDao,
-        private val cachePreferences: SharedPreferences,
-        private val apiService: ApiService
+class Repository(
+    private val lectureDao: LectureDao,
+    private val taskDao: TaskDao,
+    private val studentDao: StudentDao,
+    private val userDao: UserDao,
+    private val cachePreferences: SharedPreferences,
+    private val apiService: ApiService
 ) {
 
     companion object {
@@ -30,27 +30,6 @@ class Repository private constructor(
         const val LECTURES_TIMEOUT_KEY = "lectures_timeout"
         const val STUDENTS_TIMEOUT_KEY = "students_timeout"
         const val USER_TIMEOUT_KEY = "user_timeout"
-
-        @Volatile
-        private var instance: Repository? = null
-
-        fun getInstance(
-                lectureDao: LectureDao,
-                taskDao: TaskDao,
-                studentDao: StudentDao,
-                userDao: UserDao,
-                cachePreferences: SharedPreferences,
-                apiService: ApiService
-        ) = instance ?: synchronized(this) {
-            instance ?: Repository(
-                    lectureDao,
-                    taskDao,
-                    studentDao,
-                    userDao,
-                    cachePreferences,
-                    apiService
-            ).also { instance = it }
-        }
     }
 
     private val lectures: MutableLiveData<List<Lecture>> = MutableLiveData()
