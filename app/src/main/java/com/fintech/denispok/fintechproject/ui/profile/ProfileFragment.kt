@@ -13,6 +13,7 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
+import com.fintech.denispok.fintechproject.api.RetrofitModule.Companion.BASE_URL
 import javax.inject.Inject
 
 class ProfileFragment : Fragment() {
@@ -55,7 +56,7 @@ class ProfileFragment : Fragment() {
                 middleNameView.text = middleName
                 avatar?.also { avatar ->
                     Glide.with(this@ProfileFragment)
-                            .load("https://fintech.tinkoff.ru/" + avatar.drop(1))
+                            .load(BASE_URL + avatar.drop(1))
                             .into(profileImageView)
                 }
             }
