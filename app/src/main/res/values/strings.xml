@@ -25,6 +25,9 @@
     <string name="wrong_email">Проверьте правильность почты</string>
     <string name="wrong_password">Проверьте правильность пароля</string>
 
+    <!-- Events Page -->
+    <string name="actual">Актуальное</string>
+
     <plurals name="plurals_points">
         <item quantity="one">%.2f балл</item>
         <item quantity="few">%.2f балла</item>

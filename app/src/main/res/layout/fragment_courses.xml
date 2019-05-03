@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
+<com.fintech.denispok.fintechproject.customviews.SwipeToRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
@@ -45,4 +45,4 @@
 
         </LinearLayout>
     </ScrollView>
-</android.support.v4.widget.SwipeRefreshLayout>
+</com.fintech.denispok.fintechproject.customviews.SwipeToRefreshLayout>
