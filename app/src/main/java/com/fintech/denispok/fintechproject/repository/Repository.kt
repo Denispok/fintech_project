@@ -197,11 +197,12 @@ class Repository(
     fun getActiveEvents() = Observable.create<List<Event>> { emitter ->
         emitter.onNext(eventDao.getActiveEvents())
 
-        val eventsTimeout = cachePreferences.getLong(STUDENTS_TIMEOUT_KEY, Long.MIN_VALUE)
+        val eventsTimeout = cachePreferences.getLong(EVENTS_TIMEOUT_KEY, Long.MIN_VALUE)
 
         if (eventsTimeout <= System.currentTimeMillis()) {
             updateEventsFromServer().subscribe({
                 emitter.onNext(eventDao.getActiveEvents())
+                emitter.onComplete()
             }, {
                 emitter.onError(it)
             })

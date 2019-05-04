@@ -2,7 +2,7 @@
 <com.fintech.denispok.fintechproject.customviews.SwipeToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/events_swipe_refresh_layout"
+    android:id="@+id/events_swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 

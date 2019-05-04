@@ -1,5 +1,6 @@
 package com.fintech.denispok.fintechproject.ui.events
 
+import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -8,28 +9,38 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
-import com.fintech.denispok.fintechproject.repository.Repository
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.fintech.denispok.fintechproject.customviews.SwipeToRefreshLayout
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
-class EventsFragment: Fragment() {
+class EventsFragment : Fragment() {
 
     @Inject
-    lateinit var repository: Repository
+    lateinit var eventsViewModelFactory: EventsViewModelFactory
+    private lateinit var eventsViewModel: EventsViewModel
+    private var activeEventsDisposable: Disposable? = null
 
     private lateinit var allEventsView: TextView
-
+    private lateinit var swipeToRefreshLayout: SwipeToRefreshLayout
     private lateinit var activeEventsRecyclerView: RecyclerView
     private lateinit var activeEventsRecyclerAdapter: ActiveEventsAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        App.applicationComponent.inject(this)
+        eventsViewModel = ViewModelProvider(this, eventsViewModelFactory).get(EventsViewModel::class.java)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_events, container, false)
 
         view.apply {
             allEventsView = findViewById(R.id.events_active_all)
+            swipeToRefreshLayout = findViewById(R.id.events_swipeRefreshLayout)
             activeEventsRecyclerView = findViewById(R.id.events_active_recycler)
         }
 
@@ -37,17 +48,32 @@ class EventsFragment: Fragment() {
         activeEventsRecyclerView.adapter = activeEventsRecyclerAdapter
         activeEventsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        App.applicationComponent.inject(this)
-        repository.getActiveEvents()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe( {
+        activeEventsDisposable = eventsViewModel.getActiveEvents().subscribe({
+            allEventsView.text = "Все ${it.size}"
+            activeEventsRecyclerAdapter.events = it
+        }, {
+            Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+        })
+
+        swipeToRefreshLayout.setOnRefreshListener {
+            activeEventsDisposable?.dispose()
+            activeEventsDisposable = eventsViewModel.getActiveEvents().subscribe({
                 allEventsView.text = "Все ${it.size}"
                 activeEventsRecyclerAdapter.events = it
-            },
-            {
-                val mes = it.message
+            }, {
+                Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                swipeToRefreshLayout.isRefreshing = false
+            }, {
+                swipeToRefreshLayout.isRefreshing = false
             })
+        }
+
         return view
+    }
+
+    override fun onPause() {
+        super.onPause()
+        activeEventsDisposable?.dispose()
+        activeEventsDisposable = null
     }
 }

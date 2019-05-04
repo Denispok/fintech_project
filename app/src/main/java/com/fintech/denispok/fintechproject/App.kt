@@ -6,12 +6,13 @@ import com.fintech.denispok.fintechproject.db.DatabaseModule
 import com.fintech.denispok.fintechproject.di.ApplicationComponent
 import com.fintech.denispok.fintechproject.di.DaggerApplicationComponent
 import com.fintech.denispok.fintechproject.repository.RepositoryModule
+import io.reactivex.plugins.RxJavaPlugins
 
 class App : Application() {
 
     companion object {
         lateinit var applicationContext: Context
-        private set
+            private set
         lateinit var applicationComponent: ApplicationComponent
             private set
     }
@@ -20,6 +21,8 @@ class App : Application() {
         super.onCreate()
 
         App.applicationContext = applicationContext
+
+        RxJavaPlugins.setErrorHandler { }
 
         applicationComponent = DaggerApplicationComponent.builder()
             .repositoryModule(RepositoryModule(applicationContext))
