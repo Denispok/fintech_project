@@ -22,6 +22,7 @@ class RepositoryModule(private val applicationContext: Context) {
             database.studentDao(),
             database.userDao(),
             database.eventDao(),
+            database.courseDao(),
             cachePreferences,
             apiService
         )

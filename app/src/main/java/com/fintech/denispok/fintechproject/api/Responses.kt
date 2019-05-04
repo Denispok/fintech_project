@@ -1,5 +1,6 @@
 package com.fintech.denispok.fintechproject.api
 
+import com.fintech.denispok.fintechproject.api.entity.Course
 import com.fintech.denispok.fintechproject.api.entity.Event
 import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.api.entity.User
@@ -18,4 +19,8 @@ data class UserResponseBody(
 
 data class LecturesResponseBody(
     @SerializedName("homeworks") val lectures: List<Lecture>
+)
+
+data class ConnectionsResponseBody(
+    val courses: List<Course>
 )

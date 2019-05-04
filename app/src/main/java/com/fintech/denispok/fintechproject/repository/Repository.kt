@@ -18,6 +18,7 @@ class Repository(
     private val studentDao: StudentDao,
     private val userDao: UserDao,
     private val eventDao: EventDao,
+    private val courseDao: CourseDao,
     private val cachePreferences: SharedPreferences,
     private val apiService: ApiService
 ) {
@@ -28,6 +29,7 @@ class Repository(
         const val STUDENTS_TIMEOUT_KEY = "students_timeout"
         const val USER_TIMEOUT_KEY = "user_timeout"
         const val EVENTS_TIMEOUT_KEY = "events_timeout"
+        const val COURSES_TIMEOUT_KEY = "courses_timeout"
     }
 
     private val lectures: MutableLiveData<List<Lecture>> = MutableLiveData()
@@ -228,6 +230,38 @@ class Repository(
             })
             cachePreferences.edit()
                 .putLong(EVENTS_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
+                .apply()
+        } else {
+            throw Throwable("Connection error")
+        }
+    }
+
+    fun getCourses() = Observable.create<List<Course>> { emitter ->
+        emitter.onNext(courseDao.getCourses())
+
+        val eventsTimeout = cachePreferences.getLong(COURSES_TIMEOUT_KEY, Long.MIN_VALUE)
+
+        if (eventsTimeout <= System.currentTimeMillis()) {
+            updateCoursesFromServer().subscribe({
+                emitter.onNext(courseDao.getCourses())
+                emitter.onComplete()
+            }, {
+                emitter.onError(it)
+            })
+        } else {
+            emitter.onComplete()
+        }
+    }
+
+    fun updateCoursesFromServer() = Completable.fromCallable {
+        val response = apiService.getConnections(token).execute()
+
+        if (response.isSuccessful) {
+            val body = response.body()!!
+            courseDao.deleteAllCourses()
+            courseDao.insertCourses(body.courses)
+            cachePreferences.edit()
+                .putLong(COURSES_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
                 .apply()
         } else {
             throw Throwable("Connection error")
