@@ -16,4 +16,13 @@ class StudentsViewModel(private val repository: Repository) : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
     }
 
+    fun getTop10Students(): Observable<List<Student>> {
+        val observable = repository.getStudents()
+        return observable.subscribeOn(Schedulers.io())
+            .map { students ->
+                students.sortedByDescending { it.mark }.slice(0..9)
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
 }

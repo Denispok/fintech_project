@@ -11,22 +11,35 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.fintech.denispok.fintechproject.R
 
-class BadgeView(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
+class BadgeView(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs) {
 
-    val src: Drawable?
-    val name: String
+    var src: Drawable? = null
+        set(value) {
+            field = value
+            badgeImageView.setImageDrawable(field)
+        }
+    var name: String = ""
+        set(value) {
+            field = value
+            badgeNameView.text = field
+        }
     var count: Int = 0
         set(value) {
             field = value
             badgeCountView.text = field.toString()
         }
 
+    private val badgeImageView: ImageView
+    private val badgeNameView: TextView
     private val badgeCountView: TextView
 
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.view_badge, this, true)
+
+        badgeNameView = view.findViewById(R.id.badge_name)
         badgeCountView = view.findViewById(R.id.badge_count)
+        badgeImageView = view.findViewById(R.id.badge_card_image)
 
         context.theme.obtainStyledAttributes(
             attrs,
@@ -41,9 +54,6 @@ class BadgeView(context: Context, attrs: AttributeSet) : ConstraintLayout(contex
                 recycle()
             }
         }
-
-        view.findViewById<ImageView>(R.id.badge_card_image).setImageDrawable(src)
-        view.findViewById<TextView>(R.id.badge_name).text = name
     }
 
     override fun onSaveInstanceState(): Parcelable? {

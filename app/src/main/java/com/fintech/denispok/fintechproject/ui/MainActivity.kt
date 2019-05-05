@@ -85,7 +85,6 @@ class MainActivity : AppCompatActivity() {
     private fun updateTitle() {
         when (currentTab) {
             EVENTS_TAB -> supportActionBar?.title = getString(R.string.title_events)
-            COURSES_TAB -> supportActionBar?.title = getString(R.string.title_courses)
             PROFILE_TAB -> supportActionBar?.title = getString(R.string.title_profile)
         }
     }

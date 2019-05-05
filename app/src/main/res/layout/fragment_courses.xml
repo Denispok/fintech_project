@@ -1,47 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.fintech.denispok.fintechproject.customviews.SwipeToRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipe_refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<com.fintech.denispok.fintechproject.customviews.SwipeToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ScrollView
-            android:id="@+id/fragment_courses"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorBackground"
-            android:fillViewport="true"
-            android:scrollbars="none">
+        android:id="@+id/fragment_courses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground"
+        android:fillViewport="true"
+        android:scrollbars="none">
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <fragment
+                android:id="@+id/fragment_progress"
+                android:name="com.fintech.denispok.fintechproject.ui.courses.progress.ProgressFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginStart="@dimen/courses_fragment_margin"
+                android:layout_marginTop="@dimen/courses_fragment_margin"
+                android:layout_marginEnd="@dimen/courses_fragment_margin" />
 
             <fragment
-                    android:id="@+id/fragment_progress"
-                    android:name="com.fintech.denispok.fintechproject.ui.courses.ProgressFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/courses_fragment_margin"
-                    android:layout_marginTop="@dimen/courses_fragment_margin"
-                    android:layout_marginEnd="@dimen/courses_fragment_margin"/>
+                android:id="@+id/fragment_rating"
+                android:name="com.fintech.denispok.fintechproject.ui.courses.RatingFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/courses_fragment_margin"
+                android:layout_marginTop="@dimen/courses_fragment_margin"
+                android:layout_marginEnd="@dimen/courses_fragment_margin" />
 
             <fragment
-                    android:id="@+id/fragment_rating"
-                    android:name="com.fintech.denispok.fintechproject.ui.courses.RatingFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/courses_fragment_margin"
-                    android:layout_marginTop="@dimen/courses_fragment_margin"
-                    android:layout_marginEnd="@dimen/courses_fragment_margin"/>
-
-            <fragment
-                    android:id="@+id/fragment_completed_courses"
-                    android:name="com.fintech.denispok.fintechproject.ui.courses.CompletedCoursesFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
+                android:id="@+id/fragment_completed_courses"
+                android:name="com.fintech.denispok.fintechproject.ui.courses.CompletedCoursesFragment"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
         </LinearLayout>
     </ScrollView>

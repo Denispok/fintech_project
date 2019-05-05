@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.customviews.SwipeToRefreshLayout
+import com.fintech.denispok.fintechproject.ui.MainActivity
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
@@ -52,7 +53,7 @@ class EventsFragment : Fragment() {
             allEventsView.text = "Все ${it.size}"
             activeEventsRecyclerAdapter.events = it
         }, {
-            Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+            if (isTabSelected()) Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
         })
 
         swipeToRefreshLayout.setOnRefreshListener {
@@ -61,7 +62,7 @@ class EventsFragment : Fragment() {
                 allEventsView.text = "Все ${it.size}"
                 activeEventsRecyclerAdapter.events = it
             }, {
-                Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                if (isTabSelected()) Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
                 swipeToRefreshLayout.isRefreshing = false
             }, {
                 swipeToRefreshLayout.isRefreshing = false
@@ -76,4 +77,7 @@ class EventsFragment : Fragment() {
         activeEventsDisposable?.dispose()
         activeEventsDisposable = null
     }
+
+    private fun isTabSelected(): Boolean = (activity!! as MainActivity).currentTab == MainActivity.EVENTS_TAB
+
 }
