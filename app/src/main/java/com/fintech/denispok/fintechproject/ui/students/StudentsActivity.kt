@@ -12,17 +12,19 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class StudentsActivity : AppCompatActivity() {
 
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerLayoutManager: GridLayoutManager
     private lateinit var recyclerAdapter: StudentsAdapter
 
     @Inject
     lateinit var studentsViewModelFactory: StudentsViewModelFactory
+    private var studentsDisposable: Disposable? = null
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.students_action_bar, menu)
@@ -76,7 +78,7 @@ class StudentsActivity : AppCompatActivity() {
         recyclerView.layoutManager = recyclerLayoutManager
         recyclerView.adapter = recyclerAdapter
 
-        studentsViewModel.getStudents().subscribe({
+        studentsDisposable = studentsViewModel.getStudents().subscribe({
             recyclerAdapter.students = it
         }, {
             Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
@@ -86,12 +88,18 @@ class StudentsActivity : AppCompatActivity() {
             studentsViewModel.getStudents().subscribe({
                 recyclerAdapter.students = it
             }, {
-                swipeRefreshLayout.isRefreshing = false
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                swipeRefreshLayout.isRefreshing = false
             }, {
                 swipeRefreshLayout.isRefreshing = false
             })
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        studentsDisposable?.dispose()
+        studentsDisposable = null
     }
 
     private fun changeView() {

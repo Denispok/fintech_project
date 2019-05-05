@@ -10,8 +10,7 @@ import com.fintech.denispok.fintechproject.api.entity.Student
 import com.fintech.denispok.fintechproject.customviews.InitialsRoundView
 import kotlin.math.roundToInt
 
-class StudentsAdapter(students: List<Student>) :
-        RecyclerView.Adapter<StudentsAdapter.StudentViewHolder>() {
+class StudentsAdapter(students: List<Student>) : RecyclerView.Adapter<StudentsAdapter.StudentViewHolder>() {
 
     companion object {
         const val LINEAR_VIEW_TYPE = 0
@@ -85,7 +84,9 @@ class StudentsAdapter(students: List<Student>) :
             name.text = student.name
             if (viewType == LINEAR_VIEW_TYPE) {
                 val mark = (student.mark * 100).roundToInt()
-                points?.text = itemView.context.resources.getQuantityString(R.plurals.plurals_points, mark, mark / 100f)
+                val resources = itemView.context.resources
+                val pointsText = resources.getQuantityString(R.plurals.plurals_points, mark)
+                points?.text = resources.getString(R.string.points, mark / 100f, pointsText)
             }
         }
     }

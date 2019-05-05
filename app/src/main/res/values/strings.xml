@@ -28,10 +28,11 @@
     <!-- Events Page -->
     <string name="actual">Актуальное</string>
 
+    <string name="points">%.2f %s</string>
     <plurals name="plurals_points">
-        <item quantity="one">%.2f балл</item>
-        <item quantity="few">%.2f балла</item>
-        <item quantity="many">%.2f баллов</item>
-        <item quantity="other">%.2f баллов</item>
+        <item quantity="one">балл</item>
+        <item quantity="few">балла</item>
+        <item quantity="many">баллов</item>
+        <item quantity="other">баллов</item>
     </plurals>
 </resources>
