@@ -48,9 +48,11 @@ class CoursesFragment : Fragment(), MainActivity.IOnTabSelected {
         }
 
         coursesDisposable = coursesViewModel.getCourses().subscribe({
-            val course = it[0]
-            title = course.title
-            (activity as AppCompatActivity).supportActionBar?.title = title
+            if (it.isNotEmpty()) {
+                val course = it[0]
+                title = course.title
+                (activity as AppCompatActivity).supportActionBar?.title = title
+            }
         }, {
             if (isTabSelected()) Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
         })
@@ -59,9 +61,11 @@ class CoursesFragment : Fragment(), MainActivity.IOnTabSelected {
         swipeRefreshLayout.setOnRefreshListener {
             coursesDisposable?.dispose()
             coursesDisposable = coursesViewModel.getCourses().subscribe({
-                val course = it[0]
-                title = course.title
-                (activity as AppCompatActivity).supportActionBar?.title = title
+                if (it.isNotEmpty()) {
+                    val course = it[0]
+                    title = course.title
+                    (activity as AppCompatActivity).supportActionBar?.title = title
+                }
             }, {
                 if (isTabSelected()) Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
                 swipeRefreshLayout.isRefreshing = false

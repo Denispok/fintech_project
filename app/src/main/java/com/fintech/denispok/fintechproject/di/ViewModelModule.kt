@@ -3,6 +3,7 @@ package com.fintech.denispok.fintechproject.di
 import com.fintech.denispok.fintechproject.repository.Repository
 import com.fintech.denispok.fintechproject.ui.auth.AuthViewModelFactory
 import com.fintech.denispok.fintechproject.ui.courses.CoursesViewModelFactory
+import com.fintech.denispok.fintechproject.ui.courses.rating.RatingViewModelFactory
 import com.fintech.denispok.fintechproject.ui.events.EventsViewModelFactory
 import com.fintech.denispok.fintechproject.ui.lectures.LecturesViewModelFactory
 import com.fintech.denispok.fintechproject.ui.profile.ProfileViewModelFactory
@@ -36,4 +37,8 @@ class ViewModelModule {
     @Provides
     fun provideCoursesViewModelFactory(repository: Repository): CoursesViewModelFactory =
         CoursesViewModelFactory(repository)
+
+    @Provides
+    fun provideRatingViewModelFactory(repository: Repository): RatingViewModelFactory =
+        RatingViewModelFactory(repository)
 }

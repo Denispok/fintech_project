@@ -26,7 +26,7 @@ data class User(
         var department: String? = null,
         @SerializedName("current_work") var currentWork: String? = null,
         var resume: String? = null,
-        @PrimaryKey var id: Int? = null,
+        @PrimaryKey var id: Long? = null,
         var admin: Boolean? = null,
         var avatar: String? = null
 )

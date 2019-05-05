@@ -28,7 +28,7 @@
 
             <fragment
                 android:id="@+id/fragment_rating"
-                android:name="com.fintech.denispok.fintechproject.ui.courses.RatingFragment"
+                android:name="com.fintech.denispok.fintechproject.ui.courses.rating.RatingFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/courses_fragment_margin"
