@@ -20,7 +20,7 @@ class StudentsViewModel(private val repository: Repository) : ViewModel() {
         val observable = repository.getStudents()
         return observable.subscribeOn(Schedulers.io())
             .map { students ->
-                students.sortedByDescending { it.mark }.slice(0..9)
+                students.sortedByDescending { it.mark }.take(10)
             }
             .observeOn(AndroidSchedulers.mainThread())
     }

@@ -51,7 +51,7 @@ class CoursesFragment : Fragment(), MainActivity.IOnTabSelected {
             if (it.isNotEmpty()) {
                 val course = it[0]
                 title = course.title
-                (activity as AppCompatActivity).supportActionBar?.title = title
+                if (isTabSelected()) (activity as AppCompatActivity).supportActionBar?.title = title
             }
         }, {
             if (isTabSelected()) Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()

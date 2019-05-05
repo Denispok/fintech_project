@@ -3,7 +3,6 @@ package com.fintech.denispok.fintechproject.repository
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
-import android.util.Log
 import com.fintech.denispok.fintechproject.api.ApiService
 import com.fintech.denispok.fintechproject.api.AuthRequestBody
 import com.fintech.denispok.fintechproject.api.entity.*
@@ -33,7 +32,6 @@ class Repository(
     }
 
     private val lectures: MutableLiveData<List<Lecture>> = MutableLiveData()
-    private val user: MutableLiveData<User> = MutableLiveData()
     var token: String = ""
         get() {
             if (field.isEmpty())
@@ -82,14 +80,13 @@ class Repository(
                     }
                     taskDao.insertTasks(tasks)
                     cachePreferences.edit()
-                            .putLong(LECTURES_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
-                            .apply()
+                        .putLong(LECTURES_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
+                        .apply()
                 }
             } else {
                 callback?.onFailure()
             }
         } catch (t: Throwable) {
-            Log.d("REPO", t.message)
             callback?.onFailure(t.message)
         }
     }
@@ -151,48 +148,44 @@ class Repository(
         return tasksLiveData
     }
 
-    fun getUser(callback: ResponseCallback? = null): LiveData<User> {
-        if (user.value == null) updateUserCache(callback)
-        return user
-    }
+    fun getUser() = Observable.create<User> { emitter ->
+        userDao.getUser()?.also { emitter.onNext(it) }
 
-    fun updateUserCache(callback: ResponseCallback? = null) = Thread {
         val userTimeout = cachePreferences.getLong(USER_TIMEOUT_KEY, Long.MIN_VALUE)
 
-        if (userTimeout > System.currentTimeMillis() || user.value == null) {
-            user.postValue(userDao.getUser())
-        }
         if (userTimeout <= System.currentTimeMillis()) {
-            updateUserFromServer(callback)
+            updateUserFromServer().subscribe({
+                emitter.onNext(userDao.getUser()!!)
+                emitter.onComplete()
+            }, {
+                emitter.onError(it)
+            })
+        } else {
+            emitter.onComplete()
         }
+    }
 
-    }.start()
+    fun updateUserFromServer() = Completable.fromCallable {
+        val response = apiService.getUser(token).execute()
 
-    fun updateUserFromServer(callback: ResponseCallback? = null) {
-        try {
-            val response = apiService.getUser(token).execute()
-            if (response.isSuccessful) {
-                response.body()?.also { body ->
+        if (response.isSuccessful) {
+            response.body()?.also { body ->
 
-                    if (body.status == "Ok") {
-                        body.user?.also { user ->
+                if (body.status == "Ok") {
+                    body.user?.also { user ->
 
-                            userDao.deleteAllUsers()
-                            userDao.insertUser(user)
-                            cachePreferences.edit()
-                                    .putLong(USER_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
-                                    .apply()
-                            this@Repository.user.postValue(userDao.getUser())
-                        }
-                    } else {
-                        callback?.onFailure(body.message)
+                        userDao.deleteAllUsers()
+                        userDao.insertUser(user)
+                        cachePreferences.edit()
+                            .putLong(USER_TIMEOUT_KEY, System.currentTimeMillis() + CACHE_LIFETIME)
+                            .apply()
                     }
+                } else {
+                    throw Throwable(body.message ?: "Connection error")
                 }
-            } else {
-                callback?.onFailure()
             }
-        } catch (t: Throwable) {
-            callback?.onFailure(t.message)
+        } else {
+            throw Throwable("Connection error")
         }
     }
 
