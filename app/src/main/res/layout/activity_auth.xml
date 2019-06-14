@@ -21,7 +21,7 @@
     <EditText
         android:id="@+id/auth_editText_email"
         style="@style/authEditText"
-        android:hint="@string/login"
+        android:hint="@string/email"
         android:inputType="textEmailAddress"
         app:layout_constraintBottom_toTopOf="@id/auth_editText_password"
         app:layout_constraintEnd_toEndOf="parent"

@@ -16,7 +16,8 @@ import javax.inject.Inject
 class TaskActivity : AppCompatActivity() {
 
     companion object {
-        const val EXTRA_LECTURE_KEY = "lecture_id"
+        const val EXTRA_LECTURE_TITLE = "lecture_title"
+        const val EXTRA_LECTURE_ID = "lecture_id"
     }
 
     private lateinit var recyclerView: RecyclerView
@@ -29,6 +30,11 @@ class TaskActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task)
 
+        val lectureTitle = intent.getStringExtra(EXTRA_LECTURE_TITLE)
+        val lectureId = intent.getIntExtra(EXTRA_LECTURE_ID, 0)
+
+        supportActionBar?.title = lectureTitle
+
         App.applicationComponent.inject(this)
         val lecturesViewModel = ViewModelProvider(this, lecturesViewModelFactory).get(LecturesViewModel::class.java)
 
@@ -38,8 +44,6 @@ class TaskActivity : AppCompatActivity() {
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = recyclerAdapter
         recyclerView.addItemDecoration(DividerItemDecoration(this, layoutManager.orientation))
-
-        val lectureId = intent.getIntExtra(EXTRA_LECTURE_KEY, 0)
 
         lecturesViewModel.getTasks(lectureId).observe(this, Observer {
             if (it != null) {

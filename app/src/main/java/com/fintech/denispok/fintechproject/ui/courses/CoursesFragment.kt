@@ -1,66 +1,89 @@
 package com.fintech.denispok.fintechproject.ui.courses
 
-import android.content.Intent
+import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.os.Handler
-import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.widget.Toast
+import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
-import com.fintech.denispok.fintechproject.customviews.BadgeView
-import com.fintech.denispok.fintechproject.ui.lectures.LecturesActivity
-import com.fintech.denispok.fintechproject.ui.students.StudentsActivity
-import java.lang.ref.WeakReference
+import com.fintech.denispok.fintechproject.ui.MainActivity
+import com.fintech.denispok.fintechproject.ui.courses.progress.ProgressFragment
+import io.reactivex.disposables.Disposable
+import javax.inject.Inject
 
-class CoursesFragment : Fragment() {
+class CoursesFragment : Fragment(), MainActivity.IOnTabSelected {
 
-    companion object {
-        const val RANDOM_POINTS_CODE = 1
+    @Inject
+    lateinit var coursesViewModelFactory: CoursesViewModelFactory
+    private lateinit var coursesViewModel: CoursesViewModel
+    private var coursesDisposable: Disposable? = null
+
+    private lateinit var progressFragment: ProgressFragment
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
+    private var title: String = "Мои курсы"
+
+    override fun onTabSelected() {
+        (activity as AppCompatActivity).supportActionBar?.title = title
     }
 
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    lateinit var badgesLayout: LinearLayout
-    lateinit var handler: Handler
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        App.applicationComponent.inject(this)
+        coursesViewModel = ViewModelProvider(this, coursesViewModelFactory).get(CoursesViewModel::class.java)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_courses, container, false)
-        badgesLayout = view.findViewById(R.id.badges_layout)
 
-        view.findViewById<ConstraintLayout>(R.id.progress_details).setOnClickListener {
-            startActivity(Intent(context, StudentsActivity::class.java))
+        view.apply {
+            progressFragment = childFragmentManager.findFragmentById(R.id.fragment_progress) as ProgressFragment
+            swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
         }
 
-        view.findViewById<ConstraintLayout>(R.id.rating_details).setOnClickListener {
-            startActivity(Intent(context, LecturesActivity::class.java))
-        }
+        coursesDisposable = coursesViewModel.getCourses().subscribe({
+            if (it.isNotEmpty()) {
+                val course = it[0]
+                title = course.title
+                if (isTabSelected()) (activity as AppCompatActivity).supportActionBar?.title = title
+            }
+        }, {
+            if (isTabSelected()) Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+        })
 
-        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout)
 
         swipeRefreshLayout.setOnRefreshListener {
-            RandomPointsThread(this.handler, badgesLayout.childCount).start()
+            coursesDisposable?.dispose()
+            coursesDisposable = coursesViewModel.getCourses().subscribe({
+                if (it.isNotEmpty()) {
+                    val course = it[0]
+                    title = course.title
+                    (activity as AppCompatActivity).supportActionBar?.title = title
+                }
+            }, {
+                if (isTabSelected()) Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
+                swipeRefreshLayout.isRefreshing = false
+            }, {
+                swipeRefreshLayout.isRefreshing = false
+            })
+            progressFragment.updateStudents()
         }
 
-        val swipeRefreshLayoutReference = WeakReference(swipeRefreshLayout)
-        val badgesLayoutReference = WeakReference(badgesLayout)
-
-        handler = Handler(Handler.Callback {
-            if (it.what == RANDOM_POINTS_CODE) {
-                val randomPoints = it.obj as Array<Int>
-                for (i in 0 until randomPoints.size) {
-                    val child = badgesLayoutReference.get()?.getChildAt(i)
-                    if (child is BadgeView) {
-                        child.count = randomPoints[i]
-                    }
-                }
-                swipeRefreshLayoutReference.get()?.isRefreshing = false
-                return@Callback true
-            }
-            false
-        })
         return view
     }
+
+    override fun onPause() {
+        super.onPause()
+        coursesDisposable?.dispose()
+        coursesDisposable = null
+    }
+
+    private fun isTabSelected(): Boolean = (activity!! as MainActivity).currentTab == MainActivity.COURSES_TAB
+
 }

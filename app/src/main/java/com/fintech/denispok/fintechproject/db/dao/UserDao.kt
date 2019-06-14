@@ -9,7 +9,7 @@ import com.fintech.denispok.fintechproject.api.entity.User
 interface UserDao {
 
     @Query("SELECT * FROM user")
-    fun getUser(): User
+    fun getUser(): User?
 
     @Insert
     fun insertUser(user: User)

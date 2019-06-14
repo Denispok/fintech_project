@@ -11,6 +11,5 @@ data class Lecture(
     @SerializedName("title") var title: String,
     @Ignore @SerializedName("tasks") var tasks: List<Task> = emptyList()
 ) {
-
     constructor() : this(0, "")
 }

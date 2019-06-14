@@ -1,6 +1,5 @@
 package com.fintech.denispok.fintechproject.ui.profile
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,9 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
+import com.fintech.denispok.fintechproject.api.RetrofitModule.Companion.BASE_URL
+import com.fintech.denispok.fintechproject.api.entity.User
+import com.fintech.denispok.fintechproject.ui.MainActivity
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class ProfileFragment : Fragment() {
@@ -26,6 +30,7 @@ class ProfileFragment : Fragment() {
     @Inject
     lateinit var profileViewModelFactory: ProfileViewModelFactory
     private lateinit var profileViewModel: ProfileViewModel
+    private var profileDisposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,24 +48,40 @@ class ProfileFragment : Fragment() {
         lastNameView = view.findViewById(R.id.last_name)
         middleNameView = view.findViewById(R.id.middle_name)
 
-        swipeRefreshLayout.setOnRefreshListener {
-            profileViewModel.updateUserCache(ProfileResponseCallback(this))
-        }
-
-        profileViewModel.getUser(ProfileResponseCallback(this)).observe(this, Observer { user ->
-            swipeRefreshLayout.isRefreshing = false
-            user?.apply {
+        val onNextUser: (User) -> Unit = { user ->
+            user.apply {
                 firstNameView.text = firstName
                 lastNameView.text = lastName
                 middleNameView.text = middleName
                 avatar?.also { avatar ->
                     Glide.with(this@ProfileFragment)
-                            .load("https://fintech.tinkoff.ru/" + avatar.drop(1))
-                            .into(profileImageView)
+                        .load(BASE_URL + avatar.drop(1))
+                        .into(profileImageView)
                 }
             }
+        }
+
+        swipeRefreshLayout.setOnRefreshListener {
+            profileViewModel.getUser().subscribe(onNextUser, {
+                if (isTabSelected()) Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+                swipeRefreshLayout.isRefreshing = false
+            }, {
+                swipeRefreshLayout.isRefreshing = false
+            })
+        }
+
+        profileDisposable = profileViewModel.getUser().subscribe(onNextUser, {
+            if (isTabSelected()) Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
         })
 
         return view
     }
+
+    override fun onPause() {
+        super.onPause()
+        profileDisposable?.dispose()
+        profileDisposable = null
+    }
+
+    private fun isTabSelected(): Boolean = (activity!! as MainActivity).currentTab == MainActivity.PROFILE_TAB
 }

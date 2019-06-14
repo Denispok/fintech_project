@@ -11,6 +11,9 @@ interface StudentDao {
     @Query("SELECT * FROM student")
     fun getStudents(): List<Student>
 
+    @Query("SELECT * FROM student WHERE id = :id")
+    fun getStudent(id: Long): Student
+
     @Insert
     fun insertStudents(students: List<Student>)
 

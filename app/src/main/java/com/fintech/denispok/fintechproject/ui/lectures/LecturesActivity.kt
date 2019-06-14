@@ -13,7 +13,8 @@ import com.fintech.denispok.fintechproject.App
 import com.fintech.denispok.fintechproject.R
 import com.fintech.denispok.fintechproject.api.entity.Lecture
 import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity
-import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity.Companion.EXTRA_LECTURE_KEY
+import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity.Companion.EXTRA_LECTURE_ID
+import com.fintech.denispok.fintechproject.ui.lectures.tasks.TaskActivity.Companion.EXTRA_LECTURE_TITLE
 import javax.inject.Inject
 
 class LecturesActivity : AppCompatActivity() {
@@ -23,11 +24,12 @@ class LecturesActivity : AppCompatActivity() {
     private lateinit var recyclerAdapter: LecturesAdapter
 
     @Inject
-    lateinit var lecturesViewModelFactory:LecturesViewModelFactory
+    lateinit var lecturesViewModelFactory: LecturesViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lectures)
+        supportActionBar?.title = "Лекции"
 
         App.applicationComponent.inject(this)
 
@@ -45,7 +47,8 @@ class LecturesActivity : AppCompatActivity() {
 
             override fun onLectureClick(lecture: Lecture) {
                 val intent = Intent(this@LecturesActivity, TaskActivity::class.java)
-                intent.putExtra(EXTRA_LECTURE_KEY, lecture.id)
+                intent.putExtra(EXTRA_LECTURE_ID, lecture.id)
+                intent.putExtra(EXTRA_LECTURE_TITLE, lecture.title)
                 startActivity(intent)
             }
         })
